@@ -42,6 +42,51 @@ class InstallmentTrackingFailure extends InstallmentTrackingState {
   List<Object?> get props => [message];
 }
 
+class InstallmentTrackingPaymentError extends InstallmentTrackingState {
+  const InstallmentTrackingPaymentError({
+    required this.message,
+    required this.installment,
+    required this.payments,
+  });
+
+  final String message;
+  final InstallmentEntity installment;
+  final List<PaymentEntity> payments;
+
+  @override
+  List<Object?> get props => [message, installment, payments];
+}
+
+class InstallmentTrackingDeleted extends InstallmentTrackingState {
+  const InstallmentTrackingDeleted();
+}
+
+class InstallmentTrackingPaymentSuccess extends InstallmentTrackingState {
+  const InstallmentTrackingPaymentSuccess({
+    required this.installment,
+    required this.payments,
+  });
+
+  final InstallmentEntity installment;
+  final List<PaymentEntity> payments;
+
+  @override
+  List<Object?> get props => [installment, payments];
+}
+
+class InstallmentTrackingReverseSuccess extends InstallmentTrackingState {
+  const InstallmentTrackingReverseSuccess({
+    required this.installment,
+    required this.payments,
+  });
+
+  final InstallmentEntity installment;
+  final List<PaymentEntity> payments;
+
+  @override
+  List<Object?> get props => [installment, payments];
+}
+
 class InstallmentTrackingCommissionLoading extends InstallmentTrackingState {
   const InstallmentTrackingCommissionLoading({
     required this.installment,

@@ -109,10 +109,12 @@ class _ClientListViewState extends State<_ClientListView> {
             BlocBuilder<ClientListCubit, ClientListState>(
               buildWhen: (p, c) =>
                   c is ClientListLoaded && p is ClientListLoaded
-                      ? p.filter != c.filter
-                      : true,
+                  ? p.filter != c.filter
+                  : true,
               builder: (context, state) {
-                final filter = state is ClientListLoaded ? state.filter : ClientFilter.all;
+                final filter = state is ClientListLoaded
+                    ? state.filter
+                    : ClientFilter.all;
                 return _FilterTabs(
                   selected: filter,
                   onTap: (f) => context.read<ClientListCubit>().changeFilter(f),
@@ -124,7 +126,8 @@ class _ClientListViewState extends State<_ClientListView> {
             Expanded(
               child: BlocBuilder<ClientListCubit, ClientListState>(
                 builder: (context, state) {
-                  if (state is ClientListLoading || state is ClientListInitial) {
+                  if (state is ClientListLoading ||
+                      state is ClientListInitial) {
                     return const AppLoadingIndicator();
                   }
                   if (state is ClientListFailure) {
@@ -138,7 +141,8 @@ class _ClientListViewState extends State<_ClientListView> {
                   }
                   if (state is ClientListLoaded) {
                     if (state.clients.isEmpty) {
-                      final isFiltered = state.filter != ClientFilter.all ||
+                      final isFiltered =
+                          state.filter != ClientFilter.all ||
                           state.searchQuery.isNotEmpty;
                       return EmptyState(
                         icon: Icons.people_outline,
@@ -246,7 +250,9 @@ class _ClientCard extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        _DocTypeChip(documentationType: client.documentationType),
+                        _DocTypeChip(
+                          documentationType: client.documentationType,
+                        ),
                         const SizedBox(width: 4),
                         _TypeChip(clientType: client.clientType),
                       ],
@@ -254,11 +260,10 @@ class _ClientCard extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       client.phone,
-                      style: tt.bodySmall?.copyWith(
-                        color: cs.onSurfaceVariant,
-                      ),
+                      style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant),
                     ),
-                    if (client.activeDebtsCount > 0 || client.totalRemaining > 0) ...[
+                    if (client.activeDebtsCount > 0 ||
+                        client.totalRemaining > 0) ...[
                       const SizedBox(height: 6),
                       Row(
                         children: [
@@ -269,7 +274,10 @@ class _ClientCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            CurrencyUtils.formatCurrency(client.totalRemaining, locale),
+                            CurrencyUtils.formatCurrency(
+                              client.totalRemaining,
+                              locale,
+                            ),
                             style: tt.labelSmall?.copyWith(
                               color: cs.onSurfaceVariant,
                             ),
@@ -327,7 +335,9 @@ class _DocTypeChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
-        color: isElectronic ? cs.secondaryContainer : cs.surfaceContainerHighest,
+        color: isElectronic
+            ? cs.secondaryContainer
+            : cs.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Text(
@@ -355,9 +365,7 @@ class _TypeChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
-        color: isOffice
-            ? cs.tertiaryContainer
-            : cs.surfaceContainerHighest,
+        color: isOffice ? cs.tertiaryContainer : cs.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Text(

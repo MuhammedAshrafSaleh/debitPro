@@ -94,19 +94,29 @@ class InstallmentCard extends StatelessWidget {
                   color: isCompleted ? cs.secondary : cs.primary,
                 ),
               ),
-              if (!installment.officeCommissionPaid &&
-                  installment.officeCommissionAmount > 0) ...[
+              if (installment.officeCommissionAmount > 0) ...[
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    Icon(Icons.info_outline,
-                        size: 14,
-                        color: cs.tertiary),
+                    Icon(
+                      installment.officeCommissionPaid
+                          ? Icons.check_circle_outline
+                          : Icons.info_outline,
+                      size: 14,
+                      color: installment.officeCommissionPaid
+                          ? cs.secondary
+                          : cs.tertiary,
+                    ),
                     const SizedBox(width: 4),
                     Text(
-                      l10n.installmentsCommissionPending,
-                      style: tt.labelSmall
-                          ?.copyWith(color: cs.tertiary),
+                      installment.officeCommissionPaid
+                          ? l10n.installmentsCommissionPaidLabel
+                          : l10n.installmentsCommissionPending,
+                      style: tt.labelSmall?.copyWith(
+                        color: installment.officeCommissionPaid
+                            ? cs.secondary
+                            : cs.tertiary,
+                      ),
                     ),
                   ],
                 ),

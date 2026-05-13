@@ -48,14 +48,29 @@ import '../../features/installments/data/datasources/firestore_installment_datas
 import '../../features/installments/data/repositories/installment_repository_impl.dart';
 import '../../features/installments/domain/repositories/installment_repository.dart';
 import '../../features/installments/domain/usecases/add_installment_use_case.dart';
+import '../../features/installments/domain/usecases/delete_installment_use_case.dart';
 import '../../features/installments/domain/usecases/edit_installment_use_case.dart';
 import '../../features/installments/domain/usecases/get_installment_with_payments_use_case.dart';
+import '../../features/installments/domain/usecases/pay_installment_payment_use_case.dart';
 import '../../features/installments/domain/usecases/pay_office_commission_use_case.dart';
+import '../../features/installments/domain/usecases/reverse_installment_payment_use_case.dart';
 import '../../features/installments/domain/usecases/watch_installments_for_client_use_case.dart';
 import '../../features/installments/presentation/cubit/add_installment_cubit.dart';
 import '../../features/installments/presentation/cubit/client_installments_cubit.dart';
 import '../../features/installments/presentation/cubit/edit_installment_cubit.dart';
 import '../../features/installments/presentation/cubit/installment_tracking_cubit.dart';
+import '../../features/grace_periods/data/datasources/firestore_grace_period_datasource.dart';
+import '../../features/grace_periods/data/repositories/grace_period_repository_impl.dart';
+import '../../features/grace_periods/domain/repositories/grace_period_repository.dart';
+import '../../features/grace_periods/domain/usecases/add_grace_period_use_case.dart';
+import '../../features/grace_periods/domain/usecases/edit_grace_period_use_case.dart';
+import '../../features/grace_periods/domain/usecases/get_grace_period_use_case.dart';
+import '../../features/grace_periods/domain/usecases/pay_grace_period_office_commission_use_case.dart';
+import '../../features/grace_periods/domain/usecases/pay_grace_period_use_case.dart';
+import '../../features/grace_periods/domain/usecases/watch_grace_periods_for_client_use_case.dart';
+import '../../features/grace_periods/presentation/cubit/add_grace_period_cubit.dart';
+import '../../features/grace_periods/presentation/cubit/client_grace_periods_cubit.dart';
+import '../../features/grace_periods/presentation/cubit/edit_grace_period_cubit.dart';
 
 final sl = GetIt.instance;
 
@@ -180,15 +195,41 @@ void initInstallments() {
   sl.registerFactory(() => GetInstallmentWithPaymentsUseCase(sl()));
   sl.registerFactory(() => PayOfficeCommissionUseCase(sl()));
   sl.registerFactory(() => WatchInstallmentsForClientUseCase(sl()));
+  sl.registerFactory(() => DeleteInstallmentUseCase(sl()));
+  sl.registerFactory(() => PayInstallmentPaymentUseCase(sl()));
+  sl.registerFactory(() => ReverseInstallmentPaymentUseCase(sl()));
 
   // Cubits
   sl.registerFactory(() => AddInstallmentCubit(sl()));
   sl.registerFactory(() => EditInstallmentCubit(sl(), sl()));
-  sl.registerFactory(() => InstallmentTrackingCubit(sl(), sl()));
+  sl.registerFactory(() => InstallmentTrackingCubit(sl(), sl(), sl(), sl(), sl()));
   sl.registerFactory(() => ClientInstallmentsCubit(sl()));
 }
 
-void initGracePeriods() {}
+void initGracePeriods() {
+  // Data source
+  sl.registerLazySingleton<GracePeriodRemoteDataSource>(
+    () => GracePeriodRemoteDataSourceImpl(sl(), sl()),
+  );
+
+  // Repository
+  sl.registerLazySingleton<GracePeriodRepository>(
+    () => GracePeriodRepositoryImpl(sl(), sl()),
+  );
+
+  // Use cases
+  sl.registerFactory(() => AddGracePeriodUseCase(sl()));
+  sl.registerFactory(() => EditGracePeriodUseCase(sl()));
+  sl.registerFactory(() => GetGracePeriodUseCase(sl()));
+  sl.registerFactory(() => PayGracePeriodOfficeCommissionUseCase(sl()));
+  sl.registerFactory(() => PayGracePeriodUseCase(sl()));
+  sl.registerFactory(() => WatchGracePeriodsForClientUseCase(sl()));
+
+  // Cubits
+  sl.registerFactory(() => AddGracePeriodCubit(sl()));
+  sl.registerFactory(() => EditGracePeriodCubit(sl(), sl()));
+  sl.registerFactory(() => ClientGracePeriodsCubit(sl(), sl(), sl()));
+}
 
 void initPayments() {}
 

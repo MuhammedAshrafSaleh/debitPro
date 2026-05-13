@@ -7,6 +7,7 @@ import '../../../../core/errors/exceptions.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/network/network_info.dart';
 import '../../domain/entities/installment_entity.dart';
+import '../../domain/entities/payment_entity.dart';
 import '../../domain/repositories/installment_repository.dart';
 import '../datasources/firestore_installment_datasource.dart';
 
@@ -107,6 +108,58 @@ class InstallmentRepositoryImpl implements InstallmentRepository {
       return const Right(null);
     } on ServerException catch (e) {
       _log.e('payOfficeCommission', error: e);
+      return Left(ServerFailure(e.message));
+    } on NetworkException {
+      return Left(NetworkFailure('لا يوجد اتصال بالإنترنت'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteInstallment(
+    String installmentId,
+  ) async {
+    final offline = await _checkNetwork<void>();
+    if (offline != null) return offline;
+    try {
+      await _dataSource.deleteInstallment(installmentId);
+      return const Right(null);
+    } on ServerException catch (e) {
+      _log.e('deleteInstallment', error: e);
+      return Left(ServerFailure(e.message));
+    } on NetworkException {
+      return Left(NetworkFailure('لا يوجد اتصال بالإنترنت'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> payInstallmentPayment(
+    PaymentEntity payment,
+    DateTime now,
+  ) async {
+    final offline = await _checkNetwork<void>();
+    if (offline != null) return offline;
+    try {
+      await _dataSource.payInstallmentPayment(payment, now);
+      return const Right(null);
+    } on ServerException catch (e) {
+      _log.e('payInstallmentPayment', error: e);
+      return Left(ServerFailure(e.message));
+    } on NetworkException {
+      return Left(NetworkFailure('لا يوجد اتصال بالإنترنت'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> reverseInstallmentPayment(
+    PaymentEntity payment,
+  ) async {
+    final offline = await _checkNetwork<void>();
+    if (offline != null) return offline;
+    try {
+      await _dataSource.reverseInstallmentPayment(payment);
+      return const Right(null);
+    } on ServerException catch (e) {
+      _log.e('reverseInstallmentPayment', error: e);
       return Left(ServerFailure(e.message));
     } on NetworkException {
       return Left(NetworkFailure('لا يوجد اتصال بالإنترنت'));

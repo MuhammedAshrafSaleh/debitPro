@@ -43,8 +43,17 @@ class _InstallmentTrackingView extends StatelessWidget {
 
     return BlocConsumer<InstallmentTrackingCubit, InstallmentTrackingState>(
       listener: (context, state) {
-        if (state is InstallmentTrackingLoaded) {
-          // Refresh completed — no-op
+        if (state is InstallmentTrackingDeleted) {
+          AppSnackbar.success(context, l10n.installmentsDeleteSuccess);
+          context.pop();
+        } else if (state is InstallmentTrackingPaymentSuccess) {
+          AppSnackbar.success(context, l10n.installmentsPaySuccess);
+        } else if (state is InstallmentTrackingReverseSuccess) {
+          AppSnackbar.success(context, l10n.installmentsReverseSuccess);
+        } else if (state is InstallmentTrackingFailure) {
+          AppSnackbar.error(context, state.message);
+        } else if (state is InstallmentTrackingPaymentError) {
+          AppSnackbar.error(context, state.message);
         }
       },
       builder: (context, state) {
@@ -75,6 +84,18 @@ class _InstallmentTrackingView extends StatelessWidget {
           installment = state.installment;
           payments = state.payments;
           isCommissionLoading = true;
+        } else if (state is InstallmentTrackingPaymentError) {
+          installment = state.installment;
+          payments = state.payments;
+          isCommissionLoading = false;
+        } else if (state is InstallmentTrackingPaymentSuccess) {
+          installment = state.installment;
+          payments = state.payments;
+          isCommissionLoading = false;
+        } else if (state is InstallmentTrackingReverseSuccess) {
+          installment = state.installment;
+          payments = state.payments;
+          isCommissionLoading = false;
         } else {
           return const SizedBox.shrink();
         }
@@ -87,6 +108,12 @@ class _InstallmentTrackingView extends StatelessWidget {
                 installmentId: installmentId,
                 isCommissionLoading: isCommissionLoading,
                 onPayCommission: () => _confirmPayCommission(
+                  context,
+                  installmentId,
+                  l10n,
+                ),
+                onEdit: () => _onEditPressed(context, installmentId),
+                onDelete: () => _confirmDelete(
                   context,
                   installmentId,
                   l10n,
@@ -105,7 +132,17 @@ class _InstallmentTrackingView extends StatelessWidget {
                 delegate: SliverChildBuilderDelegate(
                   (context, index) {
                     final payment = payments[index];
-                    return _PaymentRow(payment: payment);
+                    final now = DateTime.now();
+                    final displayStatus = switch (payment.status) {
+                      PaymentStatus.paid => PaymentStatus.paid,
+                      PaymentStatus.reversed => PaymentStatus.reversed,
+                      _ => StatusUtils.computeInstallmentPaymentStatus(
+                          payment.dueDate, now),
+                    };
+                    return _DismissiblePaymentRow(
+                      payment: payment,
+                      displayStatus: displayStatus,
+                    );
                   },
                   childCount: payments.length,
                 ),
@@ -116,6 +153,32 @@ class _InstallmentTrackingView extends StatelessWidget {
         );
       },
     );
+  }
+
+  Future<void> _onEditPressed(
+    BuildContext context,
+    String installmentId,
+  ) async {
+    await context.push('/installments/$installmentId/edit');
+    if (context.mounted) {
+      context.read<InstallmentTrackingCubit>().load(installmentId);
+    }
+  }
+
+  Future<void> _confirmDelete(
+    BuildContext context,
+    String installmentId,
+    AppLocalizations l10n,
+  ) async {
+    final confirmed = await showConfirmDialog(
+      context,
+      title: l10n.installmentsDeleteConfirmTitle,
+      message: l10n.installmentsDeleteConfirmMessage,
+      confirmLabel: l10n.commonDelete,
+    );
+    if (confirmed && context.mounted) {
+      context.read<InstallmentTrackingCubit>().delete(installmentId);
+    }
   }
 
   Future<void> _confirmPayCommission(
@@ -144,12 +207,16 @@ class _InstallmentHeader extends StatelessWidget {
     required this.installmentId,
     required this.isCommissionLoading,
     required this.onPayCommission,
+    required this.onEdit,
+    required this.onDelete,
   });
 
   final InstallmentEntity installment;
   final String installmentId;
   final bool isCommissionLoading;
   final VoidCallback onPayCommission;
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -165,12 +232,17 @@ class _InstallmentHeader extends StatelessWidget {
       expandedHeight: 280,
       pinned: true,
       actions: [
+        if (installment.paidPaymentsCount == 0)
+          IconButton(
+            icon: const Icon(Icons.delete_outline),
+            tooltip: l10n.commonDelete,
+            onPressed: onDelete,
+          ),
         if (!installment.editLocked)
           IconButton(
             icon: const Icon(Icons.edit_outlined),
             tooltip: l10n.commonEdit,
-            onPressed: () =>
-                context.push('/installments/$installmentId/edit'),
+            onPressed: onEdit,
           ),
       ],
       flexibleSpace: FlexibleSpaceBar(
@@ -264,26 +336,43 @@ class _InstallmentHeader extends StatelessWidget {
                       color: cs.onPrimary,
                     ),
                   ),
-                  if (!installment.officeCommissionPaid &&
-                      installment.officeCommissionAmount > 0) ...[
+                  if (installment.officeCommissionAmount > 0) ...[
                     const SizedBox(height: 8),
-                    FilledButton.tonal(
-                      onPressed: isCommissionLoading ? null : onPayCommission,
-                      style: FilledButton.styleFrom(
-                        backgroundColor:
-                            cs.onPrimary.withValues(alpha: 0.15),
-                        foregroundColor: cs.onPrimary,
-                        minimumSize: const Size(double.infinity, 36),
+                    if (installment.officeCommissionPaid)
+                      Row(
+                        children: [
+                          Icon(Icons.check_circle_outline,
+                              size: 16,
+                              color: cs.onPrimary.withValues(alpha: 0.9)),
+                          const SizedBox(width: 6),
+                          Text(
+                            l10n.installmentsCommissionPaidLabel,
+                            style: TextStyle(
+                              color: cs.onPrimary.withValues(alpha: 0.9),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      )
+                    else
+                      FilledButton.tonal(
+                        onPressed:
+                            isCommissionLoading ? null : onPayCommission,
+                        style: FilledButton.styleFrom(
+                          backgroundColor:
+                              cs.onPrimary.withValues(alpha: 0.15),
+                          foregroundColor: cs.onPrimary,
+                          minimumSize: const Size(double.infinity, 36),
+                        ),
+                        child: isCommissionLoading
+                            ? const SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator(
+                                    strokeWidth: 2),
+                              )
+                            : Text(l10n.installmentsPayCommission),
                       ),
-                      child: isCommissionLoading
-                          ? const SizedBox(
-                              width: 16,
-                              height: 16,
-                              child: CircularProgressIndicator(
-                                  strokeWidth: 2),
-                            )
-                          : Text(l10n.installmentsPayCommission),
-                    ),
                   ],
                 ],
               ),
@@ -327,25 +416,127 @@ class _HeaderStat extends StatelessWidget {
   }
 }
 
-/// 8.10 — Localized month names using intl
-class _PaymentRow extends StatelessWidget {
-  const _PaymentRow({required this.payment});
+class _DismissiblePaymentRow extends StatelessWidget {
+  const _DismissiblePaymentRow({
+    required this.payment,
+    required this.displayStatus,
+  });
 
   final PaymentEntity payment;
+  final PaymentStatus displayStatus;
+
+  DismissDirection _direction() {
+    if (displayStatus == PaymentStatus.paid) {
+      return DismissDirection.startToEnd;
+    }
+    return DismissDirection.endToStart;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final cs = Theme.of(context).colorScheme;
+
+    final canPay = displayStatus != PaymentStatus.paid;
+    final canReverse = displayStatus == PaymentStatus.paid;
+
+    return Dismissible(
+      key: ValueKey(payment.id),
+      direction: _direction(),
+      // background: startToEnd (physical LEFT swipe in RTL) → reverse
+      background: canReverse
+          ? _SwipeBackground(
+              color: cs.error,
+              icon: Icons.undo_outlined,
+              label: l10n.installmentsReverseAction,
+              alignment: AlignmentDirectional.centerStart,
+            )
+          : const SizedBox.shrink(),
+      // secondaryBackground: endToStart (physical RIGHT swipe in RTL) → pay
+      secondaryBackground: canPay
+          ? _SwipeBackground(
+              color: Colors.green.shade700,
+              icon: Icons.check_circle_outline,
+              label: l10n.installmentsPayAction,
+              alignment: AlignmentDirectional.centerEnd,
+            )
+          : const SizedBox.shrink(),
+      confirmDismiss: (direction) async {
+        if (direction == DismissDirection.endToStart && canPay) {
+          final confirmed = await showConfirmDialog(
+            context,
+            title: l10n.installmentsPayConfirmTitle,
+            message: l10n.installmentsPayConfirmMessage,
+            confirmLabel: l10n.installmentsPayAction,
+          );
+          if (confirmed && context.mounted) {
+            context.read<InstallmentTrackingCubit>().payPayment(payment);
+          }
+        } else if (direction == DismissDirection.startToEnd && canReverse) {
+          final confirmed = await showConfirmDialog(
+            context,
+            title: l10n.installmentsReverseConfirmTitle,
+            message: l10n.installmentsReverseConfirmMessage,
+            confirmLabel: l10n.installmentsReverseAction,
+          );
+          if (confirmed && context.mounted) {
+            context.read<InstallmentTrackingCubit>().reversePayment(payment);
+          }
+        }
+        return false;
+      },
+      child: _PaymentRow(payment: payment, displayStatus: displayStatus),
+    );
+  }
+}
+
+class _SwipeBackground extends StatelessWidget {
+  const _SwipeBackground({
+    required this.color,
+    required this.icon,
+    required this.label,
+    required this.alignment,
+  });
+
+  final Color color;
+  final IconData icon;
+  final String label;
+  final AlignmentGeometry alignment;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: color,
+      alignment: alignment,
+      padding: const EdgeInsetsDirectional.symmetric(horizontal: 20),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: Colors.white),
+          const SizedBox(width: 8),
+          Text(label,
+              style: const TextStyle(
+                  color: Colors.white, fontWeight: FontWeight.bold)),
+        ],
+      ),
+    );
+  }
+}
+
+class _PaymentRow extends StatelessWidget {
+  const _PaymentRow({
+    required this.payment,
+    required this.displayStatus,
+  });
+
+  final PaymentEntity payment;
+  final PaymentStatus displayStatus;
 
   @override
   Widget build(BuildContext context) {
     final locale = Localizations.localeOf(context).languageCode;
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
-    final now = DateTime.now();
-
-    // Re-compute live status for display (stored status may be stale for upcoming/current)
-    final displayStatus = switch (payment.status) {
-      PaymentStatus.paid => PaymentStatus.paid,
-      PaymentStatus.reversed => PaymentStatus.reversed,
-      _ => StatusUtils.computeInstallmentPaymentStatus(payment.dueDate, now),
-    };
 
     final monthLabel = _localizedMonthName(locale, payment.dueDate.month);
     final label = locale == 'ar'
@@ -356,23 +547,26 @@ class _PaymentRow extends StatelessWidget {
         '${payment.dueDate.month.toString().padLeft(2, '0')}/'
         '${payment.dueDate.year}';
 
-    return ListTile(
-      contentPadding:
-          const EdgeInsetsDirectional.only(start: 16, end: 16),
-      leading: _StatusIcon(status: displayStatus),
-      title: Text(label, style: tt.bodyMedium),
-      subtitle: Text(dateLabel,
-          style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant)),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            CurrencyUtils.formatCurrency(payment.amount, locale),
-            style: tt.titleSmall,
-          ),
-          const SizedBox(width: 8),
-          StatusBadge(status: displayStatus.toLabel()),
-        ],
+    return ColoredBox(
+      color: Theme.of(context).colorScheme.surface,
+      child: ListTile(
+        contentPadding:
+            const EdgeInsetsDirectional.only(start: 16, end: 16),
+        leading: _StatusIcon(status: displayStatus),
+        title: Text(label, style: tt.bodyMedium),
+        subtitle: Text(dateLabel,
+            style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant)),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              CurrencyUtils.formatCurrency(payment.amount, locale),
+              style: tt.titleSmall,
+            ),
+            const SizedBox(width: 8),
+            StatusBadge(status: displayStatus.toLabel()),
+          ],
+        ),
       ),
     );
   }

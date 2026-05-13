@@ -259,6 +259,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Office commission recorded successfully';
 
   @override
+  String get installmentsCommissionPaidLabel => 'Office commission paid';
+
+  @override
   String get installmentsPaymentSchedule => 'Payment Schedule';
 
   @override
@@ -274,6 +277,42 @@ class AppLocalizationsEn extends AppLocalizations {
   String get installmentsTotalRemaining => 'Remaining';
 
   @override
+  String get installmentsDeleteConfirmTitle => 'Delete Installment';
+
+  @override
+  String get installmentsDeleteConfirmMessage =>
+      'Are you sure you want to delete this installment? This action cannot be undone.';
+
+  @override
+  String get installmentsDeleteSuccess => 'Installment deleted successfully';
+
+  @override
+  String get installmentsPayAction => 'Pay';
+
+  @override
+  String get installmentsPayConfirmTitle => 'Confirm Payment';
+
+  @override
+  String get installmentsPayConfirmMessage =>
+      'Do you want to record this payment as paid?';
+
+  @override
+  String get installmentsReverseAction => 'Reverse';
+
+  @override
+  String get installmentsReverseConfirmTitle => 'Reverse Payment';
+
+  @override
+  String get installmentsReverseConfirmMessage =>
+      'Do you want to reverse this payment? The amount will be returned to the remaining balance.';
+
+  @override
+  String get installmentsPaySuccess => 'Payment recorded successfully';
+
+  @override
+  String get installmentsReverseSuccess => 'Payment reversed successfully';
+
+  @override
   String get commonYes => 'Yes';
 
   @override
@@ -284,6 +323,86 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get gracePeriodEmpty => 'No grace periods';
+
+  @override
+  String get gracePeriodAddTitle => 'Add Grace Period';
+
+  @override
+  String get gracePeriodEditTitle => 'Edit Grace Period';
+
+  @override
+  String get gracePeriodAddSuccess => 'Grace period added successfully';
+
+  @override
+  String get gracePeriodEditSuccess => 'Grace period updated successfully';
+
+  @override
+  String get gracePeriodEditLocked =>
+      'This grace period cannot be edited after payment';
+
+  @override
+  String get gracePeriodName => 'Grace Period Name / Purpose';
+
+  @override
+  String get gracePeriodNameHint => 'e.g. Rent grace, Personal debt...';
+
+  @override
+  String get gracePeriodCapital => 'Total Amount';
+
+  @override
+  String get gracePeriodDueDate => 'Due Date';
+
+  @override
+  String get gracePeriodNotes => 'Notes';
+
+  @override
+  String get gracePeriodOfficeCommission => 'Office Commission';
+
+  @override
+  String get gracePeriodOfficeCommissionPaid => 'Office commission paid?';
+
+  @override
+  String get gracePeriodCommissionPending => 'Commission pending';
+
+  @override
+  String get gracePeriodCommissionPaidLabel => 'Office commission paid';
+
+  @override
+  String get gracePeriodPayCommission => 'Pay Office Commission';
+
+  @override
+  String get gracePeriodCommissionConfirmTitle => 'Pay Office Commission';
+
+  @override
+  String get gracePeriodCommissionConfirmMessage =>
+      'Do you want to record the office commission payment for this grace period?';
+
+  @override
+  String get gracePeriodCommissionPaidSuccess =>
+      'Office commission recorded successfully';
+
+  @override
+  String get gracePeriodSave => 'Save Grace Period';
+
+  @override
+  String get gracePeriodDetailsTitle => 'Grace Period Details';
+
+  @override
+  String get gracePeriodPayTitle => 'Pay Grace Period';
+
+  @override
+  String get gracePeriodPayConfirmTitle => 'Confirm Payment';
+
+  @override
+  String get gracePeriodPayConfirmMessage =>
+      'Do you want to record full payment for this grace period?';
+
+  @override
+  String get gracePeriodPaySuccess =>
+      'Grace period payment recorded successfully';
+
+  @override
+  String get gracePeriodGraceUntil => 'Grace period until';
 
   @override
   String get paymentsTitle => 'Payments';

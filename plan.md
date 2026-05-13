@@ -6,6 +6,20 @@ DebtPro is a Flutter/Firebase debt-management app for a single admin user to tra
 
 The repo is essentially green-field: `lib/` only contains the default `main.dart` counter and a `firebase_options.dart`. Everything else needs to be built. This plan orders the work by dependency so each phase can be verified before the next begins.
 
+### Firestore index rule (applies to every phase that adds a new query)
+
+Any new Firestore query that combines `where()` + `orderBy()`, or multiple `where()` clauses on different fields, **requires a composite index**. Without it the query throws `[cloud_firestore/failed-precondition]` at runtime.
+
+After finishing each phase:
+1. Check every new datasource for composite query patterns.
+2. Add the required entries to `firestore.indexes.json` (match the exact `collectionGroup`, `queryScope: "COLLECTION"`, and field order).
+3. Deploy: `firebase deploy --only firestore:indexes --project debitpro-101`
+4. Indexes build asynchronously (usually 1–5 min); verify in the Firebase console under Firestore → Indexes.
+
+**All known indexes are already written to `firestore.indexes.json` and deployed** (covers Phases 7–12). The only reason to touch this file again is if a new query pattern is introduced that isn't covered.
+
+---
+
 ### Localization rule (applies to every phase)
 
 Any new user-facing string **must** follow this order:
@@ -213,20 +227,20 @@ Goal: create installments (which generates the payment schedule atomically), vie
 
 Goal: single-payment debts with the 10-day grace window. Reference: BRD §6, PRD §6.4, screens `إضافة مُهلة - محدث.png`, `مُهَل العميل - محدث.png`.
 
-- [ ] **9.1** `GracePeriod` entity (schema §5) + `GracePeriodStatus { upcoming, graceWindow, overdue, paid }`
-- [ ] **9.2** Model + freezed
-- [ ] **9.3** `GracePeriodRepository` — `addGracePeriod`, `editGracePeriod`, `watchGracePeriodsForClient`, `payOfficeCommission`
-- [ ] **9.4** Datasource + repo impl. **`addGracePeriod` transaction:** create doc with `gracePeriodEndDate = dueDate + 10 days`, increment `clients.totalRemaining` and `activeDebtsCount`, increment `aggregates/allTime.totalCapital`, optionally run office-commission branch
-- [ ] **9.5** `editGracePeriod` blocked once `editLocked == true`
-- [ ] **9.6** Use cases: `AddGracePeriodUseCase`, `EditGracePeriodUseCase`, `PayGracePeriodOfficeCommissionUseCase`
-- [ ] **9.7** `AddGracePeriodCubit`, `EditGracePeriodCubit`
-- [ ] **9.8** Pages: `AddGracePeriodPage` (client banner, optional office-commission toggle, name, capital, due date picker, notes, save/cancel), `EditGracePeriodPage`
-- [ ] **9.9** The grace-period cards inside `ClientDetailPage` (Phase 7) already display status + "دفع المهلة" button — wire them now to the actual payment flow (payment itself comes in Phase 10)
-- [ ] **9.10** Add `initGracePeriods()` to DI
+- [x] **9.1** `GracePeriod` entity (schema §5) + `GracePeriodStatus { upcoming, graceWindow, overdue, paid }`
+- [x] **9.2** Model + freezed
+- [x] **9.3** `GracePeriodRepository` — `addGracePeriod`, `editGracePeriod`, `watchGracePeriodsForClient`, `payOfficeCommission`
+- [x] **9.4** Datasource + repo impl. **`addGracePeriod` transaction:** create doc with `gracePeriodEndDate = dueDate + 10 days`, increment `clients.totalRemaining` and `activeDebtsCount`, increment `aggregates/allTime.totalCapital`, optionally run office-commission branch
+- [x] **9.5** `editGracePeriod` blocked once `editLocked == true`
+- [x] **9.6** Use cases: `AddGracePeriodUseCase`, `EditGracePeriodUseCase`, `PayGracePeriodOfficeCommissionUseCase`
+- [x] **9.7** `AddGracePeriodCubit`, `EditGracePeriodCubit`
+- [x] **9.8** Pages: `AddGracePeriodPage` (client banner, optional office-commission toggle, name, capital, due date picker, notes, save/cancel), `EditGracePeriodPage`
+- [x] **9.9** The grace-period cards inside `ClientDetailPage` (Phase 7) already display status + "دفع المهلة" button — wire them now to the actual payment flow (payment itself comes in Phase 10)
+- [x] **9.10** Add `initGracePeriods()` to DI
 
 **Verification:** Create a grace period dated 5 days ago → status renders `grace_window` (yellow). Dated 15 days ago → status renders `overdue` with day count. Edit before payment → succeeds.
 
-**L10N sync:** Add all new keys to both ARB files → `flutter gen-l10n` → `flutter analyze` clean.
+**L10N sync:** Add all new keys to both ARB files → `flutter gen-l10n` → `flutter analyze` clean. ✅ Done for Phase 9.
 
 ---
 
@@ -300,7 +314,7 @@ Goal: the landing screen for authenticated users. Reference: BRD §8, PRD §6.6,
 Goal: deploy backend artifacts and wire app-wide concerns that depend on features being in place.
 
 - [ ] **13.1** **Firestore security rules** — copy from schema §"Security Rules", commit `firestore.rules`, add to `firebase.json`, deploy via `firebase deploy --only firestore:rules`
-- [ ] **13.2** **Firestore indexes** — write `firestore.indexes.json` from schema §"Firestore Indexes Required" (8 composite indexes), deploy via `firebase deploy --only firestore:indexes`
+- [x] **13.2** **Firestore indexes** — `firestore.indexes.json` written with all 13 composite indexes (clients, installments, payments, gracePeriods, transactions) and deployed via `firebase deploy --only firestore:indexes --project debitpro-101`. Indexes build asynchronously; check Firebase console to confirm they are all "Enabled".
 - [ ] **13.3** Verify no query in the app falls back to a missing index (run accounts filters end-to-end with Firestore debug logging on)
 - [ ] **13.4** **Status refresh on auth** — confirm `RefreshPaymentStatusesUseCase` (Phase 10.8) runs once per app-open after sign-in; show a subtle top progress bar while it runs
 - [ ] **13.5** **Offline banner** — a global widget driven by `Connectivity` that shows a non-blocking banner when offline. Mount in `DebtProApp` above the router outlet.

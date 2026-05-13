@@ -255,6 +255,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get installmentsCommissionPaidSuccess => 'تم تسجيل نسبة المكتب بنجاح';
 
   @override
+  String get installmentsCommissionPaidLabel => 'تم دفع نسبة المكتب';
+
+  @override
   String get installmentsPaymentSchedule => 'جدول الدفعات';
 
   @override
@@ -270,6 +273,42 @@ class AppLocalizationsAr extends AppLocalizations {
   String get installmentsTotalRemaining => 'المتبقي';
 
   @override
+  String get installmentsDeleteConfirmTitle => 'حذف القسط';
+
+  @override
+  String get installmentsDeleteConfirmMessage =>
+      'هل أنت متأكد من حذف هذا القسط؟ لا يمكن التراجع عن هذا الإجراء.';
+
+  @override
+  String get installmentsDeleteSuccess => 'تم حذف القسط بنجاح';
+
+  @override
+  String get installmentsPayAction => 'دفع';
+
+  @override
+  String get installmentsPayConfirmTitle => 'تأكيد الدفع';
+
+  @override
+  String get installmentsPayConfirmMessage =>
+      'هل تريد تسجيل هذه الدفعة كمدفوعة؟';
+
+  @override
+  String get installmentsReverseAction => 'إلغاء الدفع';
+
+  @override
+  String get installmentsReverseConfirmTitle => 'إلغاء الدفع';
+
+  @override
+  String get installmentsReverseConfirmMessage =>
+      'هل تريد إلغاء هذه الدفعة؟ سيتم إرجاع المبلغ إلى الرصيد المتبقي.';
+
+  @override
+  String get installmentsPaySuccess => 'تم تسجيل الدفعة بنجاح';
+
+  @override
+  String get installmentsReverseSuccess => 'تم إلغاء الدفعة بنجاح';
+
+  @override
   String get commonYes => 'نعم';
 
   @override
@@ -280,6 +319,83 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get gracePeriodEmpty => 'لا يوجد مهل';
+
+  @override
+  String get gracePeriodAddTitle => 'إضافة مهلة';
+
+  @override
+  String get gracePeriodEditTitle => 'تعديل المهلة';
+
+  @override
+  String get gracePeriodAddSuccess => 'تم إضافة المهلة بنجاح';
+
+  @override
+  String get gracePeriodEditSuccess => 'تم تحديث المهلة بنجاح';
+
+  @override
+  String get gracePeriodEditLocked => 'لا يمكن تعديل هذه المهلة بعد سدادها';
+
+  @override
+  String get gracePeriodName => 'اسم المهلة / الغرض';
+
+  @override
+  String get gracePeriodNameHint => 'مثال: مهلة إيجار، دين شخصي...';
+
+  @override
+  String get gracePeriodCapital => 'المبلغ الإجمالي';
+
+  @override
+  String get gracePeriodDueDate => 'تاريخ الاستحقاق';
+
+  @override
+  String get gracePeriodNotes => 'ملاحظات';
+
+  @override
+  String get gracePeriodOfficeCommission => 'نسبة المكتب';
+
+  @override
+  String get gracePeriodOfficeCommissionPaid => 'تم سداد نسبة المكتب؟';
+
+  @override
+  String get gracePeriodCommissionPending => 'نسبة المكتب معلقة';
+
+  @override
+  String get gracePeriodCommissionPaidLabel => 'تم دفع نسبة المكتب';
+
+  @override
+  String get gracePeriodPayCommission => 'دفع نسبة المكتب';
+
+  @override
+  String get gracePeriodCommissionConfirmTitle => 'دفع نسبة المكتب';
+
+  @override
+  String get gracePeriodCommissionConfirmMessage =>
+      'هل تريد تسجيل دفع نسبة المكتب لهذه المهلة؟';
+
+  @override
+  String get gracePeriodCommissionPaidSuccess => 'تم تسجيل نسبة المكتب بنجاح';
+
+  @override
+  String get gracePeriodSave => 'حفظ المهلة';
+
+  @override
+  String get gracePeriodDetailsTitle => 'تفاصيل المهلة';
+
+  @override
+  String get gracePeriodPayTitle => 'سداد المهلة';
+
+  @override
+  String get gracePeriodPayConfirmTitle => 'تأكيد السداد';
+
+  @override
+  String get gracePeriodPayConfirmMessage =>
+      'هل تريد تسجيل سداد هذه المهلة بالكامل؟';
+
+  @override
+  String get gracePeriodPaySuccess => 'تم تسجيل سداد المهلة بنجاح';
+
+  @override
+  String get gracePeriodGraceUntil => 'مهلة حتى';
 
   @override
   String get paymentsTitle => 'المدفوعات';

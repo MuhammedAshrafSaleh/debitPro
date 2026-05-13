@@ -13,6 +13,7 @@ import '../../../../features/clients/domain/entities/client_entity.dart';
 import '../../data/models/installment_model.dart';
 import '../../data/models/payment_model.dart';
 import '../../domain/entities/installment_entity.dart';
+import '../../domain/entities/payment_entity.dart';
 import '../../domain/repositories/installment_repository.dart';
 
 abstract class InstallmentRemoteDataSource {
@@ -27,6 +28,12 @@ abstract class InstallmentRemoteDataSource {
   Future<InstallmentModel> editInstallment(EditInstallmentParams params);
 
   Future<void> payOfficeCommission(String installmentId);
+
+  Future<void> deleteInstallment(String installmentId);
+
+  Future<void> payInstallmentPayment(PaymentEntity payment, DateTime now);
+
+  Future<void> reverseInstallmentPayment(PaymentEntity payment);
 }
 
 class InstallmentRemoteDataSourceImpl implements InstallmentRemoteDataSource {
@@ -408,6 +415,221 @@ class InstallmentRemoteDataSourceImpl implements InstallmentRemoteDataSource {
       });
     } catch (e) {
       _log.e('payOfficeCommission', error: e);
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<void> deleteInstallment(String installmentId) async {
+    try {
+      final instDoc = await _installmentsRef.doc(installmentId).get();
+      if (!instDoc.exists) throw ServerException('القسط غير موجود');
+      final installment = InstallmentModel.fromFirestore(instDoc);
+
+      if (installment.paidPaymentsCount > 0) {
+        throw ServerException('لا يمكن حذف قسط تم سداد دفعة منه');
+      }
+
+      final paymentsSnap = await _paymentsRef
+          .where('installmentId', isEqualTo: installmentId)
+          .get();
+
+      final batch = _firestore.batch();
+
+      for (final doc in paymentsSnap.docs) {
+        batch.delete(doc.reference);
+      }
+      batch.delete(_installmentsRef.doc(installmentId));
+      batch.set(
+        _clientRef(installment.clientId),
+        {
+          'totalRemaining': FieldValue.increment(-installment.totalDebt),
+          'activeDebtsCount': FieldValue.increment(-1),
+          'updatedAt': FieldValue.serverTimestamp(),
+        },
+        SetOptions(merge: true),
+      );
+      batch.set(
+        _allTimeRef,
+        {
+          'totalCapital': FieldValue.increment(-installment.capital),
+          'updatedAt': FieldValue.serverTimestamp(),
+        },
+        SetOptions(merge: true),
+      );
+
+      await batch.commit();
+    } catch (e) {
+      _log.e('deleteInstallment', error: e);
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<void> payInstallmentPayment(
+    PaymentEntity payment,
+    DateTime now,
+  ) async {
+    try {
+      final instRef = _installmentsRef.doc(payment.installmentId);
+
+      await _firestore.runTransaction((tx) async {
+        final instDoc = await tx.get(instRef);
+        if (!instDoc.exists) throw ServerException('القسط غير موجود');
+        final installment = InstallmentModel.fromFirestore(instDoc);
+
+        final payRef = _paymentsRef.doc(payment.id);
+        final payDoc = await tx.get(payRef);
+        if (!payDoc.exists) throw ServerException('الدفعة غير موجودة');
+        if (payDoc.data()!['status'] == 'paid') {
+          throw ServerException('تم دفع هذه الدفعة مسبقاً');
+        }
+
+        final newPaidCount = installment.paidPaymentsCount + 1;
+        final newTotalPaid = installment.totalPaidAmount + payment.amount;
+        final newProfit = installment.recognizedProfit + payment.profitPortion;
+        final isCompleted = newPaidCount >= installment.totalPaymentsCount;
+        final today = DateTime(now.year, now.month, now.day);
+
+        tx.update(payRef, {
+          'status': 'paid',
+          'paidDate': Timestamp.fromDate(today),
+          'paidAt': FieldValue.serverTimestamp(),
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
+
+        tx.update(instRef, {
+          'paidPaymentsCount': newPaidCount,
+          'totalPaidAmount': newTotalPaid,
+          'recognizedProfit': newProfit,
+          'editLocked': true,
+          'status': isCompleted ? 'completed' : 'active',
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
+
+        tx.set(
+          _clientRef(payment.clientId),
+          {
+            'totalPaid': FieldValue.increment(payment.amount),
+            'totalRemaining': FieldValue.increment(-payment.amount),
+            'updatedAt': FieldValue.serverTimestamp(),
+          },
+          SetOptions(merge: true),
+        );
+
+        final txLogRef = _transactionsRef.doc();
+        tx.set(txLogRef, {
+          'clientId': payment.clientId,
+          'relatedId': payment.id,
+          'relatedType': 'installment_payment',
+          'installmentId': payment.installmentId,
+          'gracePeriodId': null,
+          'amount': payment.amount,
+          'profitPortion': payment.profitPortion,
+          'type': 'installment_payment',
+          'status': 'completed',
+          'yearMonth': payment.dueMonth,
+          'paidDate': Timestamp.fromDate(today),
+          'reversedAt': null,
+          'reversalNote': null,
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+
+        tx.set(
+          _allTimeRef,
+          {
+            'totalCollected': FieldValue.increment(payment.amount),
+            'totalProfit': FieldValue.increment(payment.profitPortion),
+            'updatedAt': FieldValue.serverTimestamp(),
+          },
+          SetOptions(merge: true),
+        );
+      });
+    } on ServerException {
+      rethrow;
+    } catch (e) {
+      _log.e('payInstallmentPayment', error: e);
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<void> reverseInstallmentPayment(PaymentEntity payment) async {
+    try {
+      // Pre-fetch original transaction outside the transaction (transactions don't support queries inside)
+      final txSnap = await _transactionsRef
+          .where('relatedId', isEqualTo: payment.id)
+          .limit(1)
+          .get();
+      final originalTxRef =
+          txSnap.docs.isNotEmpty ? txSnap.docs.first.reference : null;
+
+      final instRef = _installmentsRef.doc(payment.installmentId);
+
+      await _firestore.runTransaction((tx) async {
+        final instDoc = await tx.get(instRef);
+        if (!instDoc.exists) throw ServerException('القسط غير موجود');
+        final installment = InstallmentModel.fromFirestore(instDoc);
+
+        final payRef = _paymentsRef.doc(payment.id);
+        final payDoc = await tx.get(payRef);
+        if (!payDoc.exists) throw ServerException('الدفعة غير موجودة');
+        if (payDoc.data()!['status'] != 'paid') {
+          throw ServerException('هذه الدفعة غير مدفوعة');
+        }
+
+        final newPaidCount = installment.paidPaymentsCount - 1;
+        final newTotalPaid = installment.totalPaidAmount - payment.amount;
+        final newProfit = installment.recognizedProfit - payment.profitPortion;
+
+        tx.update(payRef, {
+          'status': 'reversed',
+          'paidDate': null,
+          'paidAt': null,
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
+
+        tx.update(instRef, {
+          'paidPaymentsCount': newPaidCount,
+          'totalPaidAmount': newTotalPaid,
+          'recognizedProfit': newProfit,
+          if (newPaidCount == 0) 'editLocked': false,
+          if (installment.status == InstallmentStatus.completed) 'status': 'active',
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
+
+        tx.set(
+          _clientRef(payment.clientId),
+          {
+            'totalPaid': FieldValue.increment(-payment.amount),
+            'totalRemaining': FieldValue.increment(payment.amount),
+            'updatedAt': FieldValue.serverTimestamp(),
+          },
+          SetOptions(merge: true),
+        );
+
+        if (originalTxRef != null) {
+          tx.update(originalTxRef, {
+            'status': 'reversed',
+            'reversedAt': FieldValue.serverTimestamp(),
+            'reversalNote': 'تم إلغاء الدفعة',
+          });
+        }
+
+        tx.set(
+          _allTimeRef,
+          {
+            'totalCollected': FieldValue.increment(-payment.amount),
+            'totalProfit': FieldValue.increment(-payment.profitPortion),
+            'updatedAt': FieldValue.serverTimestamp(),
+          },
+          SetOptions(merge: true),
+        );
+      });
+    } on ServerException {
+      rethrow;
+    } catch (e) {
+      _log.e('reverseInstallmentPayment', error: e);
       throw ServerException(e.toString());
     }
   }

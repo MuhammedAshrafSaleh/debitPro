@@ -572,6 +572,12 @@ abstract class AppLocalizations {
   /// **'تم تسجيل نسبة المكتب بنجاح'**
   String get installmentsCommissionPaidSuccess;
 
+  /// No description provided for @installmentsCommissionPaidLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم دفع نسبة المكتب'**
+  String get installmentsCommissionPaidLabel;
+
   /// No description provided for @installmentsPaymentSchedule.
   ///
   /// In ar, this message translates to:
@@ -602,6 +608,72 @@ abstract class AppLocalizations {
   /// **'المتبقي'**
   String get installmentsTotalRemaining;
 
+  /// No description provided for @installmentsDeleteConfirmTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'حذف القسط'**
+  String get installmentsDeleteConfirmTitle;
+
+  /// No description provided for @installmentsDeleteConfirmMessage.
+  ///
+  /// In ar, this message translates to:
+  /// **'هل أنت متأكد من حذف هذا القسط؟ لا يمكن التراجع عن هذا الإجراء.'**
+  String get installmentsDeleteConfirmMessage;
+
+  /// No description provided for @installmentsDeleteSuccess.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم حذف القسط بنجاح'**
+  String get installmentsDeleteSuccess;
+
+  /// No description provided for @installmentsPayAction.
+  ///
+  /// In ar, this message translates to:
+  /// **'دفع'**
+  String get installmentsPayAction;
+
+  /// No description provided for @installmentsPayConfirmTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تأكيد الدفع'**
+  String get installmentsPayConfirmTitle;
+
+  /// No description provided for @installmentsPayConfirmMessage.
+  ///
+  /// In ar, this message translates to:
+  /// **'هل تريد تسجيل هذه الدفعة كمدفوعة؟'**
+  String get installmentsPayConfirmMessage;
+
+  /// No description provided for @installmentsReverseAction.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلغاء الدفع'**
+  String get installmentsReverseAction;
+
+  /// No description provided for @installmentsReverseConfirmTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلغاء الدفع'**
+  String get installmentsReverseConfirmTitle;
+
+  /// No description provided for @installmentsReverseConfirmMessage.
+  ///
+  /// In ar, this message translates to:
+  /// **'هل تريد إلغاء هذه الدفعة؟ سيتم إرجاع المبلغ إلى الرصيد المتبقي.'**
+  String get installmentsReverseConfirmMessage;
+
+  /// No description provided for @installmentsPaySuccess.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم تسجيل الدفعة بنجاح'**
+  String get installmentsPaySuccess;
+
+  /// No description provided for @installmentsReverseSuccess.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إلغاء الدفعة بنجاح'**
+  String get installmentsReverseSuccess;
+
   /// No description provided for @commonYes.
   ///
   /// In ar, this message translates to:
@@ -625,6 +697,156 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'لا يوجد مهل'**
   String get gracePeriodEmpty;
+
+  /// No description provided for @gracePeriodAddTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إضافة مهلة'**
+  String get gracePeriodAddTitle;
+
+  /// No description provided for @gracePeriodEditTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديل المهلة'**
+  String get gracePeriodEditTitle;
+
+  /// No description provided for @gracePeriodAddSuccess.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إضافة المهلة بنجاح'**
+  String get gracePeriodAddSuccess;
+
+  /// No description provided for @gracePeriodEditSuccess.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم تحديث المهلة بنجاح'**
+  String get gracePeriodEditSuccess;
+
+  /// No description provided for @gracePeriodEditLocked.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا يمكن تعديل هذه المهلة بعد سدادها'**
+  String get gracePeriodEditLocked;
+
+  /// No description provided for @gracePeriodName.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم المهلة / الغرض'**
+  String get gracePeriodName;
+
+  /// No description provided for @gracePeriodNameHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'مثال: مهلة إيجار، دين شخصي...'**
+  String get gracePeriodNameHint;
+
+  /// No description provided for @gracePeriodCapital.
+  ///
+  /// In ar, this message translates to:
+  /// **'المبلغ الإجمالي'**
+  String get gracePeriodCapital;
+
+  /// No description provided for @gracePeriodDueDate.
+  ///
+  /// In ar, this message translates to:
+  /// **'تاريخ الاستحقاق'**
+  String get gracePeriodDueDate;
+
+  /// No description provided for @gracePeriodNotes.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملاحظات'**
+  String get gracePeriodNotes;
+
+  /// No description provided for @gracePeriodOfficeCommission.
+  ///
+  /// In ar, this message translates to:
+  /// **'نسبة المكتب'**
+  String get gracePeriodOfficeCommission;
+
+  /// No description provided for @gracePeriodOfficeCommissionPaid.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم سداد نسبة المكتب؟'**
+  String get gracePeriodOfficeCommissionPaid;
+
+  /// No description provided for @gracePeriodCommissionPending.
+  ///
+  /// In ar, this message translates to:
+  /// **'نسبة المكتب معلقة'**
+  String get gracePeriodCommissionPending;
+
+  /// No description provided for @gracePeriodCommissionPaidLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم دفع نسبة المكتب'**
+  String get gracePeriodCommissionPaidLabel;
+
+  /// No description provided for @gracePeriodPayCommission.
+  ///
+  /// In ar, this message translates to:
+  /// **'دفع نسبة المكتب'**
+  String get gracePeriodPayCommission;
+
+  /// No description provided for @gracePeriodCommissionConfirmTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'دفع نسبة المكتب'**
+  String get gracePeriodCommissionConfirmTitle;
+
+  /// No description provided for @gracePeriodCommissionConfirmMessage.
+  ///
+  /// In ar, this message translates to:
+  /// **'هل تريد تسجيل دفع نسبة المكتب لهذه المهلة؟'**
+  String get gracePeriodCommissionConfirmMessage;
+
+  /// No description provided for @gracePeriodCommissionPaidSuccess.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم تسجيل نسبة المكتب بنجاح'**
+  String get gracePeriodCommissionPaidSuccess;
+
+  /// No description provided for @gracePeriodSave.
+  ///
+  /// In ar, this message translates to:
+  /// **'حفظ المهلة'**
+  String get gracePeriodSave;
+
+  /// No description provided for @gracePeriodDetailsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تفاصيل المهلة'**
+  String get gracePeriodDetailsTitle;
+
+  /// No description provided for @gracePeriodPayTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'سداد المهلة'**
+  String get gracePeriodPayTitle;
+
+  /// No description provided for @gracePeriodPayConfirmTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تأكيد السداد'**
+  String get gracePeriodPayConfirmTitle;
+
+  /// No description provided for @gracePeriodPayConfirmMessage.
+  ///
+  /// In ar, this message translates to:
+  /// **'هل تريد تسجيل سداد هذه المهلة بالكامل؟'**
+  String get gracePeriodPayConfirmMessage;
+
+  /// No description provided for @gracePeriodPaySuccess.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم تسجيل سداد المهلة بنجاح'**
+  String get gracePeriodPaySuccess;
+
+  /// No description provided for @gracePeriodGraceUntil.
+  ///
+  /// In ar, this message translates to:
+  /// **'مهلة حتى'**
+  String get gracePeriodGraceUntil;
 
   /// No description provided for @paymentsTitle.
   ///

@@ -14,6 +14,9 @@ import '../../../../core/presentation/widgets/empty_state.dart';
 import '../../../../core/presentation/widgets/quality_badge.dart';
 import '../../../../core/utils/currency_utils.dart';
 import '../../../../core/utils/status_utils.dart';
+import '../../../../features/grace_periods/presentation/cubit/client_grace_periods_cubit.dart';
+import '../../../../features/grace_periods/presentation/cubit/client_grace_periods_state.dart';
+import '../../../../features/grace_periods/presentation/widgets/grace_period_card.dart';
 import '../../../../features/installments/presentation/cubit/client_installments_cubit.dart';
 import '../../../../features/installments/presentation/cubit/client_installments_state.dart';
 import '../../../../features/installments/presentation/widgets/installment_card.dart';
@@ -40,6 +43,10 @@ class ClientDetailPage extends StatelessWidget {
         BlocProvider(
           create: (_) =>
               sl<ClientInstallmentsCubit>()..watch(clientId),
+        ),
+        BlocProvider(
+          create: (_) =>
+              sl<ClientGracePeriodsCubit>()..watch(clientId),
         ),
       ],
       child: _ClientDetailView(clientId: clientId),
@@ -323,12 +330,34 @@ class _ClientDetailScaffoldState extends State<_ClientDetailScaffold>
                     return const SizedBox.shrink();
                   },
                 ),
-                // Grace periods tab — stub until Phase 9
-                EmptyState(
-                  icon: Icons.timer_outlined,
-                  message: l10n.gracePeriodEmpty,
-                  ctaLabel: l10n.clientsAddGracePeriod,
-                  onCta: () => context.push('/grace-periods/add/${client.id}'),
+                // Grace periods tab — Phase 9
+                BlocBuilder<ClientGracePeriodsCubit, ClientGracePeriodsState>(
+                  builder: (context, gpState) {
+                    if (gpState is ClientGracePeriodsLoading) {
+                      return const AppLoadingIndicator();
+                    }
+                    if (gpState is ClientGracePeriodsFailure) {
+                      return Center(child: Text(gpState.message));
+                    }
+                    if (gpState is ClientGracePeriodsLoaded) {
+                      if (gpState.gracePeriods.isEmpty) {
+                        return EmptyState(
+                          icon: Icons.timer_outlined,
+                          message: l10n.gracePeriodEmpty,
+                          ctaLabel: l10n.clientsAddGracePeriod,
+                          onCta: () => context
+                              .push('/grace-periods/add/${client.id}'),
+                        );
+                      }
+                      return ListView.builder(
+                        itemCount: gpState.gracePeriods.length,
+                        itemBuilder: (context, index) => GracePeriodCard(
+                          gracePeriod: gpState.gracePeriods[index],
+                        ),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
                 ),
               ],
             ),

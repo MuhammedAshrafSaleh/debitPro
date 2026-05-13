@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "933775253132",
+    "project_id": "debitpro-101",
+    "storage_bucket": "debitpro-101.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:933775253132:android:c76082c417eef8c39e65a9",
+        "android_client_info": {
+          "package_name": "com.example.debit_pro"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCsmnwzMhMT2e6Y4HnXCGg7py7LZUwYNaQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,22 @@
+{
+    "flutter": {
+        "platforms": {
+            "android": {
+                "default": {
+                    "projectId": "debitpro-101",
+                    "appId": "1:933775253132:android:c76082c417eef8c39e65a9",
+                    "fileOutput": "android/app/google-services.json"
+                }
+            },
+            "dart": {
+                "lib/firebase_options.dart": {
+                    "projectId": "debitpro-101",
+                    "configurations": {
+                        "android": "1:933775253132:android:c76082c417eef8c39e65a9",
+                        "ios": "1:933775253132:ios:8eec61e1e9c7b0709e65a9"
+                    }
+                }
+            }
+        }
+    }
+}

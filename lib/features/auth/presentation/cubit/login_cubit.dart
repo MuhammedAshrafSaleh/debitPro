@@ -13,6 +13,7 @@ class LoginCubit extends Cubit<LoginState> {
   Future<void> signIn({required String email, required String password}) async {
     emit(const LoginLoading());
     final result = await _signIn(SignInParams(email: email, password: password));
+    if (isClosed) return;
     result.fold(
       (failure) => emit(LoginFailure(failure.message)),
       (_) => emit(const LoginSuccess()),

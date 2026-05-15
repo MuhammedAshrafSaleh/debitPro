@@ -20,6 +20,7 @@ class EditInstallmentCubit extends Cubit<EditInstallmentState> {
   Future<void> load(String installmentId) async {
     emit(state.copyWith(status: EditInstallmentStatus.loading));
     final result = await _getInstallmentWithPayments(installmentId);
+    if (isClosed) return;
     result.fold(
       (failure) => emit(state.copyWith(
         status: EditInstallmentStatus.failure,
@@ -82,6 +83,7 @@ class EditInstallmentCubit extends Cubit<EditInstallmentState> {
         startDate: startDate,
       ),
     );
+    if (isClosed) return;
 
     result.fold(
       (failure) => emit(state.copyWith(

@@ -407,6 +407,52 @@ class AppLocalizationsAr extends AppLocalizations {
   String get dashboardTitle => 'لوحة التحكم';
 
   @override
+  String get dashboardGreetingMorning => 'صباح الخير';
+
+  @override
+  String get dashboardGreetingEvening => 'مساء الخير';
+
+  @override
+  String get dashboardMonthlyCollection => 'المحصل هذا الشهر';
+
+  @override
+  String dashboardMonthlyTarget(String amount) {
+    return 'الهدف: $amount';
+  }
+
+  @override
+  String get dashboardTotalProfits => 'إجمالي الأرباح';
+
+  @override
+  String get dashboardTotalCapital => 'إجمالي رأس المال';
+
+  @override
+  String get dashboardOfficeCommission => 'نسبة المكتب';
+
+  @override
+  String get dashboardTotalClients => 'إجمالي العملاء';
+
+  @override
+  String dashboardActiveClients(int count) {
+    return '$count نشط';
+  }
+
+  @override
+  String get dashboardRecentTransactionsTitle => 'آخر المعاملات';
+
+  @override
+  String get dashboardRecentTransactionsEmpty => 'لا توجد معاملات بعد';
+
+  @override
+  String get dashboardTxInstallment => 'قسط شهري';
+
+  @override
+  String get dashboardTxGracePeriod => 'مهلة';
+
+  @override
+  String get dashboardTxOfficeCommission => 'نسبة مكتب';
+
+  @override
   String get settingsTitle => 'الإعدادات';
 
   @override
@@ -663,4 +709,165 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get clientsFilterEmpty => 'لا يوجد عملاء في هذا الفلتر';
+
+  @override
+  String get accountsFilters => 'الفلاتر';
+
+  @override
+  String get accountsTabAll => 'الكل';
+
+  @override
+  String get accountsTabInstallments => 'الأقساط';
+
+  @override
+  String get accountsTabGracePeriods => 'المهل';
+
+  @override
+  String get accountsFromMonth => 'من شهر';
+
+  @override
+  String get accountsToMonth => 'إلى شهر';
+
+  @override
+  String get accountsSelectMonth => 'اختر الشهر...';
+
+  @override
+  String get accountsSearchHint => 'ابحث باسم العميل أو السجل';
+
+  @override
+  String get accountsEmpty => 'لا توجد سجلات تطابق الفلاتر';
+
+  @override
+  String accountsPaidOn(String date) {
+    return 'تم السداد في $date';
+  }
+
+  @override
+  String get accountsTypeInstallment => 'قسط';
+
+  @override
+  String get accountsTypeGracePeriod => 'مهلة';
+
+  @override
+  String accountsSummaryPaid(int count) {
+    return 'مدفوع: $count';
+  }
+
+  @override
+  String accountsSummaryCurrent(int count) {
+    return 'جاري: $count';
+  }
+
+  @override
+  String accountsSummaryOverdue(int count) {
+    return 'متأخر: $count';
+  }
+
+  @override
+  String get accountsTotalCollected => 'المحصل';
+
+  @override
+  String get accountsTotalProfits => 'الأرباح';
+
+  @override
+  String get accountsTotalOperations => 'عدد العمليات';
+
+  @override
+  String get accountsOverdueClientsTitle => 'العملاء المتأخرون';
+
+  @override
+  String accountsOverdueDays(int days) {
+    return 'متأخر $days يوم';
+  }
+
+  @override
+  String accountsOverdueItemsCount(int count) {
+    return '$count سجل';
+  }
+
+  @override
+  String get accountsPayInstallment => 'دفع القسط';
+
+  @override
+  String get accountsPayGracePeriod => 'دفع المهلة';
+
+  @override
+  String get accountsPrintReport => 'طباعة التقرير';
+
+  @override
+  String get accountsReportTitle => 'تقرير الحسابات';
+
+  @override
+  String get accountsReportPeriod => 'الفترة';
+
+  @override
+  String get accountsReportAllPeriods => 'كل الفترات';
+
+  @override
+  String get accountsReportGenerated => 'تم الإنشاء في';
+
+  @override
+  String get accountsPdfColClient => 'اسم العميل';
+
+  @override
+  String get accountsPdfColPhone => 'رقم الهاتف';
+
+  @override
+  String get accountsPdfColItemName => 'اسم السجل';
+
+  @override
+  String get accountsPdfColType => 'النوع';
+
+  @override
+  String get accountsPdfColDueDate => 'تاريخ الاستحقاق';
+
+  @override
+  String get accountsPdfColStatus => 'الحالة';
+
+  @override
+  String get accountsPdfColAmount => 'المبلغ';
+
+  @override
+  String get accountsPdfTotalCollected => 'المحصل';
+
+  @override
+  String get accountsPdfTotalProfits => 'الأرباح';
+
+  @override
+  String get accountsPdfOperationsCount => 'عدد العمليات';
+
+  @override
+  String accountsPdfOverdueSummaryItem(int count) {
+    return '$count سجل متأخر';
+  }
+
+  @override
+  String get accountsPdfTotalOverdue => 'إجمالي المتأخرات';
+
+  @override
+  String get accountsPdfStatusUpcoming => 'قادم';
+
+  @override
+  String get accountsPdfStatusCurrent => 'جاري';
+
+  @override
+  String get accountsPdfStatusGraceWindow => 'في المهلة';
+
+  @override
+  String get accountsPdfStatusOverdue => 'متأخر';
+
+  @override
+  String get accountsPdfStatusPaid => 'مدفوع';
+
+  @override
+  String get accountsPdfStatusReversed => 'مُعاد';
+
+  @override
+  String get accountsPdfTypeInstallment => 'قسط';
+
+  @override
+  String get accountsPdfTypeGracePeriod => 'مهلة';
+
+  @override
+  String get commonOfflineBanner => 'لا يوجد اتصال بالإنترنت';
 }

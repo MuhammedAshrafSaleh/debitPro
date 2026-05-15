@@ -20,6 +20,8 @@ import '../../../../features/grace_periods/presentation/widgets/grace_period_car
 import '../../../../features/installments/presentation/cubit/client_installments_cubit.dart';
 import '../../../../features/installments/presentation/cubit/client_installments_state.dart';
 import '../../../../features/installments/presentation/widgets/installment_card.dart';
+import '../../../../features/payments/presentation/bloc/payment_bloc.dart';
+import '../../../../features/payments/presentation/bloc/payment_state.dart';
 import '../../domain/entities/client_entity.dart';
 import '../cubit/client_detail_cubit.dart';
 import '../cubit/client_detail_state.dart';
@@ -48,6 +50,7 @@ class ClientDetailPage extends StatelessWidget {
           create: (_) =>
               sl<ClientGracePeriodsCubit>()..watch(clientId),
         ),
+        BlocProvider(create: (_) => sl<PaymentBloc>()),
       ],
       child: _ClientDetailView(clientId: clientId),
     );
@@ -63,15 +66,37 @@ class _ClientDetailView extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
 
-    return BlocListener<EditClientCubit, EditClientState>(
-      listener: (context, state) {
-        if (state is EditClientFailure) {
-          AppSnackbar.error(context, state.message);
-        } else if (state is EditClientDeleted) {
-          AppSnackbar.success(context, l10n.clientsDeleteSuccess);
-          if (context.mounted) context.go('/clients');
-        }
-      },
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<EditClientCubit, EditClientState>(
+          listener: (context, state) {
+            if (state is EditClientFailure) {
+              AppSnackbar.error(context, state.message);
+            } else if (state is EditClientDeleted) {
+              AppSnackbar.success(context, l10n.clientsDeleteSuccess);
+              if (context.mounted) context.go('/clients');
+            }
+          },
+        ),
+        BlocListener<PaymentBloc, PaymentState>(
+          listenWhen: (prev, curr) =>
+              prev.actionStatus != curr.actionStatus &&
+              curr.actionStatus != PaymentActionStatus.idle,
+          listener: (context, state) {
+            if (state.actionStatus == PaymentActionStatus.success) {
+              final msg = state.actionKind == PaymentActionKind.reverse
+                  ? l10n.installmentsReverseSuccess
+                  : l10n.gracePeriodPaySuccess;
+              AppSnackbar.success(context, msg);
+            } else if (state.actionStatus == PaymentActionStatus.failure) {
+              AppSnackbar.error(
+                context,
+                state.actionMessage ?? l10n.commonError,
+              );
+            }
+          },
+        ),
+      ],
       child: BlocBuilder<ClientDetailCubit, ClientDetailState>(
         builder: (context, state) {
           if (state is ClientDetailLoading || state is ClientDetailInitial) {
@@ -103,6 +128,7 @@ class _ClientDetailView extends StatelessWidget {
     );
   }
 }
+
 
 class _ClientDetailScaffold extends StatefulWidget {
   const _ClientDetailScaffold({

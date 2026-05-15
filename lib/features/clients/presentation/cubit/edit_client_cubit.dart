@@ -36,6 +36,7 @@ class EditClientCubit extends Cubit<EditClientState> {
         notes: notes?.trim().isEmpty == true ? null : notes?.trim(),
       ),
     );
+    if (isClosed) return;
     result.fold(
       (failure) => emit(EditClientFailure(failure.message)),
       (client) => emit(EditClientSaved(client)),
@@ -45,6 +46,7 @@ class EditClientCubit extends Cubit<EditClientState> {
   Future<void> delete(String id) async {
     emit(const EditClientSaving());
     final result = await _deleteClient(id);
+    if (isClosed) return;
     result.fold(
       (failure) => emit(EditClientFailure(failure.message)),
       (_) => emit(const EditClientDeleted()),

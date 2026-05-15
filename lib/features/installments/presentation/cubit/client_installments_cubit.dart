@@ -18,9 +18,14 @@ class ClientInstallmentsCubit extends Cubit<ClientInstallmentsState> {
     emit(const ClientInstallmentsLoading());
     _subscription?.cancel();
     _subscription = _watchInstallments(clientId).listen(
-      (installments) => emit(ClientInstallmentsLoaded(installments)),
-      onError: (Object e) =>
-          emit(ClientInstallmentsFailure(e.toString())),
+      (installments) {
+        if (isClosed) return;
+        emit(ClientInstallmentsLoaded(installments));
+      },
+      onError: (Object e) {
+        if (isClosed) return;
+        emit(ClientInstallmentsFailure(e.toString()));
+      },
     );
   }
 

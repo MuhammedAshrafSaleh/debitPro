@@ -23,8 +23,6 @@ abstract class GracePeriodRemoteDataSource {
   Future<GracePeriodModel> editGracePeriod(EditGracePeriodParams params);
 
   Future<void> payOfficeCommission(String gracePeriodId);
-
-  Future<void> payGracePeriod(String gracePeriodId);
 }
 
 class GracePeriodRemoteDataSourceImpl implements GracePeriodRemoteDataSource {
@@ -276,64 +274,6 @@ class GracePeriodRemoteDataSourceImpl implements GracePeriodRemoteDataSource {
       });
     } catch (e) {
       _log.e('payOfficeCommission', error: e);
-      throw ServerException(e.toString());
-    }
-  }
-
-  @override
-  Future<void> payGracePeriod(String gracePeriodId) async {
-    try {
-      final now = DateTime.now();
-
-      final gpDoc = await _gracePeriodsRef.doc(gracePeriodId).get();
-      if (!gpDoc.exists) throw ServerException('المهلة غير موجودة');
-      final gp = GracePeriodModel.fromFirestore(gpDoc);
-
-      if (gp.status == GracePeriodStatus.paid) {
-        throw ServerException('تم سداد هذه المهلة مسبقاً');
-      }
-
-      final txRef = _transactionsRef.doc();
-
-      await _firestore.runTransaction((tx) async {
-        tx.update(_gracePeriodsRef.doc(gracePeriodId), {
-          'status': 'paid',
-          'editLocked': true,
-          'paidDate': Timestamp.fromDate(now),
-          'paidAt': FieldValue.serverTimestamp(),
-          'updatedAt': FieldValue.serverTimestamp(),
-        });
-
-        tx.set(
-          _clientRef(gp.clientId),
-          {
-            'totalPaid': FieldValue.increment(gp.capital),
-            'totalRemaining': FieldValue.increment(-gp.capital),
-            'activeDebtsCount': FieldValue.increment(-1),
-            'updatedAt': FieldValue.serverTimestamp(),
-          },
-          SetOptions(merge: true),
-        );
-
-        tx.set(txRef, {
-          'clientId': gp.clientId,
-          'relatedId': gracePeriodId,
-          'relatedType': 'grace_period',
-          'installmentId': null,
-          'gracePeriodId': gracePeriodId,
-          'amount': gp.capital,
-          'profitPortion': null,
-          'type': 'grace_period_payment',
-          'status': 'completed',
-          'yearMonth': AppDateUtils.yearMonthKey(now),
-          'paidDate': Timestamp.fromDate(now),
-          'reversedAt': null,
-          'reversalNote': null,
-          'createdAt': FieldValue.serverTimestamp(),
-        });
-      });
-    } catch (e) {
-      _log.e('payGracePeriod', error: e);
       throw ServerException(e.toString());
     }
   }

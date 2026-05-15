@@ -31,6 +31,7 @@ class AddClientCubit extends Cubit<AddClientState> {
         notes: notes?.trim().isEmpty == true ? null : notes?.trim(),
       ),
     );
+    if (isClosed) return;
     result.fold(
       (failure) => emit(AddClientFailure(failure.message)),
       (client) => emit(AddClientSaved(client)),

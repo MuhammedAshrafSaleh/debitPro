@@ -866,6 +866,90 @@ abstract class AppLocalizations {
   /// **'لوحة التحكم'**
   String get dashboardTitle;
 
+  /// No description provided for @dashboardGreetingMorning.
+  ///
+  /// In ar, this message translates to:
+  /// **'صباح الخير'**
+  String get dashboardGreetingMorning;
+
+  /// No description provided for @dashboardGreetingEvening.
+  ///
+  /// In ar, this message translates to:
+  /// **'مساء الخير'**
+  String get dashboardGreetingEvening;
+
+  /// No description provided for @dashboardMonthlyCollection.
+  ///
+  /// In ar, this message translates to:
+  /// **'المحصل هذا الشهر'**
+  String get dashboardMonthlyCollection;
+
+  /// No description provided for @dashboardMonthlyTarget.
+  ///
+  /// In ar, this message translates to:
+  /// **'الهدف: {amount}'**
+  String dashboardMonthlyTarget(String amount);
+
+  /// No description provided for @dashboardTotalProfits.
+  ///
+  /// In ar, this message translates to:
+  /// **'إجمالي الأرباح'**
+  String get dashboardTotalProfits;
+
+  /// No description provided for @dashboardTotalCapital.
+  ///
+  /// In ar, this message translates to:
+  /// **'إجمالي رأس المال'**
+  String get dashboardTotalCapital;
+
+  /// No description provided for @dashboardOfficeCommission.
+  ///
+  /// In ar, this message translates to:
+  /// **'نسبة المكتب'**
+  String get dashboardOfficeCommission;
+
+  /// No description provided for @dashboardTotalClients.
+  ///
+  /// In ar, this message translates to:
+  /// **'إجمالي العملاء'**
+  String get dashboardTotalClients;
+
+  /// No description provided for @dashboardActiveClients.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} نشط'**
+  String dashboardActiveClients(int count);
+
+  /// No description provided for @dashboardRecentTransactionsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'آخر المعاملات'**
+  String get dashboardRecentTransactionsTitle;
+
+  /// No description provided for @dashboardRecentTransactionsEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد معاملات بعد'**
+  String get dashboardRecentTransactionsEmpty;
+
+  /// No description provided for @dashboardTxInstallment.
+  ///
+  /// In ar, this message translates to:
+  /// **'قسط شهري'**
+  String get dashboardTxInstallment;
+
+  /// No description provided for @dashboardTxGracePeriod.
+  ///
+  /// In ar, this message translates to:
+  /// **'مهلة'**
+  String get dashboardTxGracePeriod;
+
+  /// No description provided for @dashboardTxOfficeCommission.
+  ///
+  /// In ar, this message translates to:
+  /// **'نسبة مكتب'**
+  String get dashboardTxOfficeCommission;
+
   /// No description provided for @settingsTitle.
   ///
   /// In ar, this message translates to:
@@ -1375,6 +1459,300 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'لا يوجد عملاء في هذا الفلتر'**
   String get clientsFilterEmpty;
+
+  /// No description provided for @accountsFilters.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفلاتر'**
+  String get accountsFilters;
+
+  /// No description provided for @accountsTabAll.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكل'**
+  String get accountsTabAll;
+
+  /// No description provided for @accountsTabInstallments.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأقساط'**
+  String get accountsTabInstallments;
+
+  /// No description provided for @accountsTabGracePeriods.
+  ///
+  /// In ar, this message translates to:
+  /// **'المهل'**
+  String get accountsTabGracePeriods;
+
+  /// No description provided for @accountsFromMonth.
+  ///
+  /// In ar, this message translates to:
+  /// **'من شهر'**
+  String get accountsFromMonth;
+
+  /// No description provided for @accountsToMonth.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلى شهر'**
+  String get accountsToMonth;
+
+  /// No description provided for @accountsSelectMonth.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر الشهر...'**
+  String get accountsSelectMonth;
+
+  /// No description provided for @accountsSearchHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'ابحث باسم العميل أو السجل'**
+  String get accountsSearchHint;
+
+  /// No description provided for @accountsEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد سجلات تطابق الفلاتر'**
+  String get accountsEmpty;
+
+  /// No description provided for @accountsPaidOn.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم السداد في {date}'**
+  String accountsPaidOn(String date);
+
+  /// No description provided for @accountsTypeInstallment.
+  ///
+  /// In ar, this message translates to:
+  /// **'قسط'**
+  String get accountsTypeInstallment;
+
+  /// No description provided for @accountsTypeGracePeriod.
+  ///
+  /// In ar, this message translates to:
+  /// **'مهلة'**
+  String get accountsTypeGracePeriod;
+
+  /// No description provided for @accountsSummaryPaid.
+  ///
+  /// In ar, this message translates to:
+  /// **'مدفوع: {count}'**
+  String accountsSummaryPaid(int count);
+
+  /// No description provided for @accountsSummaryCurrent.
+  ///
+  /// In ar, this message translates to:
+  /// **'جاري: {count}'**
+  String accountsSummaryCurrent(int count);
+
+  /// No description provided for @accountsSummaryOverdue.
+  ///
+  /// In ar, this message translates to:
+  /// **'متأخر: {count}'**
+  String accountsSummaryOverdue(int count);
+
+  /// No description provided for @accountsTotalCollected.
+  ///
+  /// In ar, this message translates to:
+  /// **'المحصل'**
+  String get accountsTotalCollected;
+
+  /// No description provided for @accountsTotalProfits.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأرباح'**
+  String get accountsTotalProfits;
+
+  /// No description provided for @accountsTotalOperations.
+  ///
+  /// In ar, this message translates to:
+  /// **'عدد العمليات'**
+  String get accountsTotalOperations;
+
+  /// No description provided for @accountsOverdueClientsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'العملاء المتأخرون'**
+  String get accountsOverdueClientsTitle;
+
+  /// No description provided for @accountsOverdueDays.
+  ///
+  /// In ar, this message translates to:
+  /// **'متأخر {days} يوم'**
+  String accountsOverdueDays(int days);
+
+  /// No description provided for @accountsOverdueItemsCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} سجل'**
+  String accountsOverdueItemsCount(int count);
+
+  /// No description provided for @accountsPayInstallment.
+  ///
+  /// In ar, this message translates to:
+  /// **'دفع القسط'**
+  String get accountsPayInstallment;
+
+  /// No description provided for @accountsPayGracePeriod.
+  ///
+  /// In ar, this message translates to:
+  /// **'دفع المهلة'**
+  String get accountsPayGracePeriod;
+
+  /// No description provided for @accountsPrintReport.
+  ///
+  /// In ar, this message translates to:
+  /// **'طباعة التقرير'**
+  String get accountsPrintReport;
+
+  /// No description provided for @accountsReportTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تقرير الحسابات'**
+  String get accountsReportTitle;
+
+  /// No description provided for @accountsReportPeriod.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفترة'**
+  String get accountsReportPeriod;
+
+  /// No description provided for @accountsReportAllPeriods.
+  ///
+  /// In ar, this message translates to:
+  /// **'كل الفترات'**
+  String get accountsReportAllPeriods;
+
+  /// No description provided for @accountsReportGenerated.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم الإنشاء في'**
+  String get accountsReportGenerated;
+
+  /// No description provided for @accountsPdfColClient.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم العميل'**
+  String get accountsPdfColClient;
+
+  /// No description provided for @accountsPdfColPhone.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم الهاتف'**
+  String get accountsPdfColPhone;
+
+  /// No description provided for @accountsPdfColItemName.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم السجل'**
+  String get accountsPdfColItemName;
+
+  /// No description provided for @accountsPdfColType.
+  ///
+  /// In ar, this message translates to:
+  /// **'النوع'**
+  String get accountsPdfColType;
+
+  /// No description provided for @accountsPdfColDueDate.
+  ///
+  /// In ar, this message translates to:
+  /// **'تاريخ الاستحقاق'**
+  String get accountsPdfColDueDate;
+
+  /// No description provided for @accountsPdfColStatus.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحالة'**
+  String get accountsPdfColStatus;
+
+  /// No description provided for @accountsPdfColAmount.
+  ///
+  /// In ar, this message translates to:
+  /// **'المبلغ'**
+  String get accountsPdfColAmount;
+
+  /// No description provided for @accountsPdfTotalCollected.
+  ///
+  /// In ar, this message translates to:
+  /// **'المحصل'**
+  String get accountsPdfTotalCollected;
+
+  /// No description provided for @accountsPdfTotalProfits.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأرباح'**
+  String get accountsPdfTotalProfits;
+
+  /// No description provided for @accountsPdfOperationsCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'عدد العمليات'**
+  String get accountsPdfOperationsCount;
+
+  /// No description provided for @accountsPdfOverdueSummaryItem.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} سجل متأخر'**
+  String accountsPdfOverdueSummaryItem(int count);
+
+  /// No description provided for @accountsPdfTotalOverdue.
+  ///
+  /// In ar, this message translates to:
+  /// **'إجمالي المتأخرات'**
+  String get accountsPdfTotalOverdue;
+
+  /// No description provided for @accountsPdfStatusUpcoming.
+  ///
+  /// In ar, this message translates to:
+  /// **'قادم'**
+  String get accountsPdfStatusUpcoming;
+
+  /// No description provided for @accountsPdfStatusCurrent.
+  ///
+  /// In ar, this message translates to:
+  /// **'جاري'**
+  String get accountsPdfStatusCurrent;
+
+  /// No description provided for @accountsPdfStatusGraceWindow.
+  ///
+  /// In ar, this message translates to:
+  /// **'في المهلة'**
+  String get accountsPdfStatusGraceWindow;
+
+  /// No description provided for @accountsPdfStatusOverdue.
+  ///
+  /// In ar, this message translates to:
+  /// **'متأخر'**
+  String get accountsPdfStatusOverdue;
+
+  /// No description provided for @accountsPdfStatusPaid.
+  ///
+  /// In ar, this message translates to:
+  /// **'مدفوع'**
+  String get accountsPdfStatusPaid;
+
+  /// No description provided for @accountsPdfStatusReversed.
+  ///
+  /// In ar, this message translates to:
+  /// **'مُعاد'**
+  String get accountsPdfStatusReversed;
+
+  /// No description provided for @accountsPdfTypeInstallment.
+  ///
+  /// In ar, this message translates to:
+  /// **'قسط'**
+  String get accountsPdfTypeInstallment;
+
+  /// No description provided for @accountsPdfTypeGracePeriod.
+  ///
+  /// In ar, this message translates to:
+  /// **'مهلة'**
+  String get accountsPdfTypeGracePeriod;
+
+  /// No description provided for @commonOfflineBanner.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا يوجد اتصال بالإنترنت'**
+  String get commonOfflineBanner;
 }
 
 class _AppLocalizationsDelegate

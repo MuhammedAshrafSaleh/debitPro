@@ -26,6 +26,7 @@ class ClientListCubit extends Cubit<ClientListState> {
     _sub?.cancel();
     _sub = _watchClients(filter).listen(
       (clients) {
+        if (isClosed) return;
         _allClients = clients;
         emit(ClientListLoaded(
           clients: _applyFilters(_allClients),
@@ -33,6 +34,7 @@ class ClientListCubit extends Cubit<ClientListState> {
         ));
       },
       onError: (Object e) {
+        if (isClosed) return;
         _log.e('watchClients', error: e);
         emit(ClientListFailure(e.toString()));
       },

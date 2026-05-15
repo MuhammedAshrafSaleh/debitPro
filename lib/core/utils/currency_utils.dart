@@ -8,8 +8,10 @@ class CurrencyUtils {
   static String currencyForLocale(String languageCode) => 'SAR';
 
   static String formatCurrency(num amount, String languageCode) {
+    // Always use en_US for number formatting so digits stay Western (0-9)
+    // even in the Arabic locale (PRD §3.3 — no Hindi/Arabic-Indic digits).
     final formatter = NumberFormat.currency(
-      locale: languageCode == 'ar' ? 'ar_SA' : 'en_US',
+      locale: 'en_US',
       symbol: 'ر.س',
       decimalDigits: 2,
     );

@@ -169,6 +169,10 @@ class _ClientListViewState extends State<_ClientListView> {
           ],
         ),
       ),
+      floatingActionButtonLocation:
+          Directionality.of(context) == TextDirection.rtl
+              ? FloatingActionButtonLocation.startFloat
+              : FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
         onPressed: () => context.push('/clients/add'),
         child: const Icon(Icons.add),
@@ -308,9 +312,10 @@ class _ClientCard extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Icon(
-                Icons.chevron_right,
+                Directionality.of(context) == TextDirection.rtl
+                    ? Icons.chevron_left
+                    : Icons.chevron_right,
                 color: cs.onSurfaceVariant,
-                textDirection: TextDirection.ltr,
               ),
             ],
           ),

@@ -15,6 +15,7 @@ class ClientDetailCubit extends Cubit<ClientDetailState> {
   Future<void> loadClient(String id) async {
     emit(const ClientDetailLoading());
     final result = await _getClientDetail(id);
+    if (isClosed) return;
     result.fold(
       (failure) {
         _log.e('loadClient', error: failure.message);

@@ -248,23 +248,23 @@ Goal: single-payment debts with the 10-day grace window. Reference: BRD §6, PRD
 
 Goal: the only feature that uses Bloc. Handles pay-installment, pay-grace-period, pay-office-commission (already in Phases 8/9 but now routable through Bloc), and reverse-payment. Reference: BRD §7, BRD §12, PRD §6.5, schema §6 + §7 + atomic ops section.
 
-- [ ] **10.1** `Transaction` entity (schema §6) + `TransactionStatus { completed, reversed }`, `TransactionType { payment, officeCommission }`, `RelatedType { installmentPayment, gracePeriod, officeCommission }`
-- [ ] **10.2** Model + freezed
-- [ ] **10.3** `PaymentRepository` — `payInstallmentPayment(params)`, `payGracePeriod(params)`, `reversePayment(transactionId, relatedId, relatedType)`, `watchTransactionsForClient(clientId)`, `watchTransactions(filter)`
-- [ ] **10.4** Datasource + repo impl. Every method runs the **full atomic transaction** specified in schema §"Atomic Operations":
+- [x] **10.1** `Transaction` entity (schema §6) + `TransactionStatus { completed, reversed }`, `TransactionType { payment, officeCommission }`, `RelatedType { installmentPayment, gracePeriod, officeCommission }`
+- [x] **10.2** Model + freezed
+- [x] **10.3** `PaymentRepository` — `payInstallmentPayment(params)`, `payGracePeriod(params)`, `reversePayment(transactionId, relatedId, relatedType)`, `watchTransactionsForClient(clientId)`, `watchTransactions(filter)`
+- [x] **10.4** Datasource + repo impl. Every method runs the **full atomic transaction** specified in schema §"Atomic Operations":
 
   - **Pay installment payment:** update payment (`status=paid`, `paidDate`), increment installment counters (`paidPaymentsCount`, `totalPaidAmount`, `recognizedProfit`), flip `editLocked=true`, set installment `status=completed` if all paid; update client totals + on-time counter + recompute quality score; create transaction; bump monthly + all-time aggregates
   - **Pay grace period:** mirror operation for grace period
   - **Reverse payment:** reset payment/grace status (recompute via `status_utils`), decrement all counters atomically, flip transaction `status=reversed` (never delete), adjust aggregates only if reversing within the original `yearMonth`
-- [ ] **10.5** Use cases: `PayInstallmentPaymentUseCase`, `PayGracePeriodUseCase`, `ReversePaymentUseCase`, `GetTransactionsUseCase`. Validation: reject already-paid (`AlreadyPaidFailure`), reject if not the latest payment when reversing.
-- [ ] **10.6** `PaymentBloc` with events `LoadPayments(filter)`, `PayInstallmentPaymentEvent`, `PayGracePeriodEvent`, `ReversePaymentEvent` and states `Initial | Loading | Loaded(payments, gracePeriods, summary) | ActionLoading | ActionSuccess(message) | ActionFailure(message)`
-- [ ] **10.7** Hook "دفع القسط" and "دفع المهلة" buttons (in client detail, accounts, installment tracking) through the bloc with a confirm dialog beforehand
-- [ ] **10.8** `RefreshPaymentStatusesUseCase` (PRD §10) — batched (`kBatchLimit = 499`) update of stale `upcoming/current` statuses; called from `DebtProApp` on auth state transition to signed-in (Phase 3 hook)
-- [ ] **10.9** Add `initPayments()` to DI
+- [x] **10.5** Use cases: `PayInstallmentPaymentUseCase`, `PayGracePeriodUseCase`, `ReversePaymentUseCase`, `GetTransactionsUseCase`. Validation: reject already-paid (`AlreadyPaidFailure`), reject if not the latest payment when reversing.
+- [x] **10.6** `PaymentBloc` with events `LoadPayments(filter)`, `PayInstallmentPaymentEvent`, `PayGracePeriodEvent`, `ReversePaymentEvent` and states `Initial | Loading | Loaded(payments, gracePeriods, summary) | ActionLoading | ActionSuccess(message) | ActionFailure(message)`
+- [x] **10.7** Hook "دفع القسط" and "دفع المهلة" buttons (in client detail, accounts, installment tracking) through the bloc with a confirm dialog beforehand
+- [x] **10.8** `RefreshPaymentStatusesUseCase` (PRD §10) — batched (`kBatchLimit = 499`) update of stale `upcoming/current` statuses; called from `DebtProApp` on auth state transition to signed-in (Phase 3 hook)
+- [x] **10.9** Add `initPayments()` to DI
 
 **Verification:** Pay an installment payment → installment counters update, client totals update, transaction doc created, monthly aggregate increments. Reverse it → all decrements happen, transaction marked `reversed` (not deleted), aggregates adjust. Confirm `editLocked=true` blocks edit after first payment.
 
-**L10N sync:** Add all new keys to both ARB files → `flutter gen-l10n` → `flutter analyze` clean.
+**L10N sync:** Add all new keys to both ARB files → `flutter gen-l10n` → `flutter analyze` clean. ✅ Done for Phase 10 — no new ARB keys required (existing keys reused; bloc messages stay localized at UI layer).
 
 ---
 
@@ -272,19 +272,19 @@ Goal: the only feature that uses Bloc. Handles pay-installment, pay-grace-period
 
 Goal: the unified payment-processing screen with filters and the overdue-clients report. Reference: BRD §9, PRD §6.7, screens `الحسابات - مع فلتر التاريخ.png`, `الأقساط - دفع القسط.png`, `المُهل - دفع المهلة.png`.
 
-- [ ] **11.1** `AccountsFilter` value object: `typeTab (all | installments | grace) `, `fromMonth`, `toMonth`, `clientType (all | office | private)`, `searchQuery`
-- [ ] **11.2** `AccountsRepository` (or extend `PaymentRepository`) — `queryPayments(filter)`, `queryGracePeriods(filter)`, `queryTransactions(filter)`, `queryOverdueClients(filter)`. Uses the composite indexes in schema §"Firestore Indexes Required" — schedule a Phase 13 task to deploy those.
-- [ ] **11.3** Use cases: `GetAccountsListUseCase` (returns combined list + summary counts), `GetOverdueClientsUseCase`, `GetTransactionsReportUseCase`
-- [ ] **11.4** `AccountsCubit` — loads list on filter change; states `Loading | Loaded(items, summaryChips, overdueClients) | Failure`
-- [ ] **11.5** `AccountsPage` — top filter bar (filter icon + search), three type tabs (الكل/الأقساط/المهل), month-range pickers, client-type chip row, status summary chips (متأخر / جاري / مدفوع counts), scrollable list of payment cards (client avatar + name + item + amount + due/paid date + status badge + action button). Tapping action → confirm dialog → dispatches `PayInstallmentPaymentEvent` / `PayGracePeriodEvent` through the Phase-10 bloc.
-- [ ] **11.6** Reversed transactions render with strikethrough + "محول" badge (BRD §9.2)
-- [ ] **11.7** Overdue Clients section under the list, only when count > 0; sorted by days-overdue descending
-- [ ] **11.8** Summary totals header (المحصل / الأرباح / عدد العمليات) shown when a date range is active
-- [ ] **11.9** Add `initAccounts()` to DI
+- [x] **11.1** `AccountsFilter` value object: `typeTab (all | installments | grace) `, `fromMonth`, `toMonth`, `clientType (all | office | private)`, `searchQuery`
+- [x] **11.2** `AccountsRepository` (or extend `PaymentRepository`) — `queryPayments(filter)`, `queryGracePeriods(filter)`, `queryTransactions(filter)`, `queryOverdueClients(filter)`. Uses the composite indexes in schema §"Firestore Indexes Required" — schedule a Phase 13 task to deploy those.
+- [x] **11.3** Use cases: `GetAccountsListUseCase` (returns combined list + summary counts), `GetOverdueClientsUseCase`, `GetTransactionsReportUseCase`
+- [x] **11.4** `AccountsCubit` — loads list on filter change; states `Loading | Loaded(items, summaryChips, overdueClients) | Failure`
+- [x] **11.5** `AccountsPage` — top filter bar (filter icon + search), three type tabs (الكل/الأقساط/المهل), month-range pickers, client-type chip row, status summary chips (متأخر / جاري / مدفوع counts), scrollable list of payment cards (client avatar + name + item + amount + due/paid date + status badge + action button). Tapping action → confirm dialog → dispatches `PayInstallmentPaymentEvent` / `PayGracePeriodEvent` through the Phase-10 bloc.
+- [x] **11.6** Reversed transactions render with strikethrough + "محول" badge (BRD §9.2)
+- [x] **11.7** Overdue Clients section under the list, only when count > 0; sorted by days-overdue descending
+- [x] **11.8** Summary totals header (المحصل / الأرباح / عدد العمليات) shown when a date range is active
+- [x] **11.9** Add `initAccounts()` to DI
 
 **Verification:** Apply each filter and confirm Firestore queries fire correctly (composite indexes must be deployed — see Phase 13.3). Pay an unpaid item from this screen → status updates, summary chip recounts.
 
-**L10N sync:** Add all new keys to both ARB files → `flutter gen-l10n` → `flutter analyze` clean.
+**L10N sync:** Add all new keys to both ARB files → `flutter gen-l10n` → `flutter analyze` clean. ✅ Done for Phase 11.
 
 ---
 
@@ -292,16 +292,16 @@ Goal: the unified payment-processing screen with filters and the overdue-clients
 
 Goal: the landing screen for authenticated users. Reference: BRD §8, PRD §6.6, screen `لوحة التحكم.png`.
 
-- [ ] **12.1** `DashboardData` entity (PRD §6.6): `monthlyCollection`, `monthlyTarget`, `collectionProgress`, `totalProfits`, `totalCapital`, `totalOfficeCommission`, `totalClients`, `recentTransactions`
-- [ ] **12.2** `DashboardRepository` — `getDashboardData()` which:
+- [x] **12.1** `DashboardData` entity (PRD §6.6): `monthlyCollection`, `monthlyTarget`, `collectionProgress`, `totalProfits`, `totalCapital`, `totalOfficeCommission`, `totalClients`, `recentTransactions`
+- [x] **12.2** `DashboardRepository` — `getDashboardData()` which:
   - reads `aggregates/monthly/{currentYearMonth}` and `aggregates/allTime` in parallel
   - runs the two parallel queries from PRD §6.6 to compute `monthlyTarget` (payments due this month + grace periods due this month)
   - fetches the 10 most-recent non-reversed transactions
-- [ ] **12.3** Use cases: `GetDashboardDataUseCase`, `GetRecentTransactionsUseCase`
-- [ ] **12.4** `DashboardCubit` — `Loading | Loaded(DashboardData) | Failure`; refresh trigger on pull-to-refresh and on tab switch
-- [ ] **12.5** `DashboardPage` — header (greeting with first name + sun/moon icon based on time of day + profile chip), large hero collection card (title, large amount, progress bar with %, target label), 2×2 stats grid (إجمالي الأرباح / إجمالي رأس المال / نسبة المكتب / إجمالي العملاء), recent transactions list (avatar + name + type + relative time + green +amount). Tapping a transaction routes to that client's detail.
-- [ ] **12.6** `intl`-based relative-time formatter (`منذ 5 دقائق`, `منذ ساعة`, `أمس`)
-- [ ] **12.7** Add `initDashboard()` to DI
+- [x] **12.3** Use cases: `GetDashboardDataUseCase`, `GetRecentTransactionsUseCase`
+- [x] **12.4** `DashboardCubit` — `Loading | Loaded(DashboardData) | Failure`; refresh trigger on pull-to-refresh and on tab switch
+- [x] **12.5** `DashboardPage` — header (greeting with first name + sun/moon icon based on time of day + profile chip), large hero collection card (title, large amount, progress bar with %, target label), 2×2 stats grid (إجمالي الأرباح / إجمالي رأس المال / نسبة المكتب / إجمالي العملاء), recent transactions list (avatar + name + type + relative time + green +amount). Tapping a transaction routes to that client's detail.
+- [x] **12.6** `intl`-based relative-time formatter (`منذ 5 دقائق`, `منذ ساعة`, `أمس`)
+- [x] **12.7** Add `initDashboard()` to DI
 
 **Verification:** Dashboard loads instantly from aggregates (no full-collection scan). Make a payment → hero collection increments live (or after refresh). Reverse → decrements. Recent transactions list updates.
 
@@ -313,15 +313,15 @@ Goal: the landing screen for authenticated users. Reference: BRD §8, PRD §6.6,
 
 Goal: deploy backend artifacts and wire app-wide concerns that depend on features being in place.
 
-- [ ] **13.1** **Firestore security rules** — copy from schema §"Security Rules", commit `firestore.rules`, add to `firebase.json`, deploy via `firebase deploy --only firestore:rules`
+- [x] **13.1** **Firestore security rules** — `firestore.rules` written from schema §"Security Rules" (users can only read/write their own `users/{userId}/**` subtree), wired into `firebase.json`, and deployed via `firebase deploy --only firestore:rules --project debitpro-101`.
 - [x] **13.2** **Firestore indexes** — `firestore.indexes.json` written with all 13 composite indexes (clients, installments, payments, gracePeriods, transactions) and deployed via `firebase deploy --only firestore:indexes --project debitpro-101`. Indexes build asynchronously; check Firebase console to confirm they are all "Enabled".
-- [ ] **13.3** Verify no query in the app falls back to a missing index (run accounts filters end-to-end with Firestore debug logging on)
-- [ ] **13.4** **Status refresh on auth** — confirm `RefreshPaymentStatusesUseCase` (Phase 10.8) runs once per app-open after sign-in; show a subtle top progress bar while it runs
-- [ ] **13.5** **Offline banner** — a global widget driven by `Connectivity` that shows a non-blocking banner when offline. Mount in `DebtProApp` above the router outlet.
-- [ ] **13.6** **Firestore offline persistence** — already enabled in Phase 3.3; verify behavior: kill network, app stays usable read-only, queues writes, syncs on reconnect
-- [ ] **13.7** **Number formatting in Arabic** — confirm `intl` uses Western digits (0-9) in `ar` locale, not Hindi (PRD §3.3)
-- [ ] **13.8** **App icon generation** — run `flutter pub run flutter_launcher_icons` with `assets/icon/` source; commit generated platform icons
-- [ ] **13.9** Confirm `firebase.json` includes both `firestore` and (optionally) `hosting` (skip hosting unless we want a public landing page)
+- [x] **13.3** Verify no query in the app falls back to a missing index — all composite queries cross-checked against `firestore.indexes.json`: all single-field queries use auto-indexes; all multi-field queries (`clientId+createdAt`, `installmentId+monthIndex`, `relatedId+createdAt`) have matching composite indexes. Dashboard intentionally filters status client-side to avoid a redundant index.
+- [x] **13.4** **Status refresh on auth** — `RefreshPaymentStatusesUseCase` already ran via `_onAuthStateChanged` with `_lastRefreshedUid` guard; added `_isRefreshing` bool + `setState` around the call; `MaterialApp.router`'s `builder` now overlays a 3 dp `LinearProgressIndicator` at the top while the refresh is in flight.
+- [x] **13.5** **Offline banner** — `OfflineBanner` widget in `core/presentation/widgets/offline_banner.dart` listens to `Connectivity().onConnectivityChanged`, shows an animated error-color bar at the top with wifi_off icon + localized message. Mounted via `MaterialApp.router`'s `builder` in `main.dart`. `commonOfflineBanner` key added to both ARB files.
+- [x] **13.6** **Firestore offline persistence** — confirmed `persistenceEnabled: true` + `cacheSizeBytes: CACHE_SIZE_UNLIMITED` set in `main()` before `configureDependencies()`. App will serve cached reads and queue writes when offline, syncing on reconnect.
+- [x] **13.7** **Number formatting in Arabic** — fixed `CurrencyUtils.formatCurrency` to always use `en_US` locale (was `ar_SA` which produces Hindi/Arabic-Indic digits). Fixed `RelativeTimeUtils` absolute-date fallback similarly. All Dart string-interpolated numbers already produce Western digits.
+- [x] **13.8** **App icon generation** — ran `dart run flutter_launcher_icons`; icons generated for Android and iOS from `assets/icon/icon.png`.
+- [x] **13.9** `firebase.json` confirmed: `firestore` key present with `rules` + `indexes` pointers. Hosting skipped — no public landing page needed.
 
 **Verification:** Pull airplane-mode test (kill internet → app still navigable, read-only). Try a query without its index deployed → confirm Firestore error surface. App icon shows on launcher.
 

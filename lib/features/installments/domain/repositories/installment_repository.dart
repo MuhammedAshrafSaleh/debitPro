@@ -35,15 +35,6 @@ abstract class InstallmentRepository {
   Future<Either<Failure, void>> payOfficeCommission(String installmentId);
 
   Future<Either<Failure, void>> deleteInstallment(String installmentId);
-
-  Future<Either<Failure, void>> payInstallmentPayment(
-    PaymentEntity payment,
-    DateTime now,
-  );
-
-  Future<Either<Failure, void>> reverseInstallmentPayment(
-    PaymentEntity payment,
-  );
 }
 
 class AddInstallmentParams {

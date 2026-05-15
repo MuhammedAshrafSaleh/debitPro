@@ -414,6 +414,52 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dashboardTitle => 'Dashboard';
 
   @override
+  String get dashboardGreetingMorning => 'Good morning';
+
+  @override
+  String get dashboardGreetingEvening => 'Good evening';
+
+  @override
+  String get dashboardMonthlyCollection => 'Collected this month';
+
+  @override
+  String dashboardMonthlyTarget(String amount) {
+    return 'Target: $amount';
+  }
+
+  @override
+  String get dashboardTotalProfits => 'Total Profits';
+
+  @override
+  String get dashboardTotalCapital => 'Total Capital';
+
+  @override
+  String get dashboardOfficeCommission => 'Office Commission';
+
+  @override
+  String get dashboardTotalClients => 'Total Clients';
+
+  @override
+  String dashboardActiveClients(int count) {
+    return '$count active';
+  }
+
+  @override
+  String get dashboardRecentTransactionsTitle => 'Recent Transactions';
+
+  @override
+  String get dashboardRecentTransactionsEmpty => 'No transactions yet';
+
+  @override
+  String get dashboardTxInstallment => 'Installment Payment';
+
+  @override
+  String get dashboardTxGracePeriod => 'Grace Period';
+
+  @override
+  String get dashboardTxOfficeCommission => 'Office Commission';
+
+  @override
   String get settingsTitle => 'Settings';
 
   @override
@@ -670,4 +716,165 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get clientsFilterEmpty => 'No clients match this filter';
+
+  @override
+  String get accountsFilters => 'Filters';
+
+  @override
+  String get accountsTabAll => 'All';
+
+  @override
+  String get accountsTabInstallments => 'Installments';
+
+  @override
+  String get accountsTabGracePeriods => 'Grace Periods';
+
+  @override
+  String get accountsFromMonth => 'From month';
+
+  @override
+  String get accountsToMonth => 'To month';
+
+  @override
+  String get accountsSelectMonth => 'Select month...';
+
+  @override
+  String get accountsSearchHint => 'Search by client name or item';
+
+  @override
+  String get accountsEmpty => 'No records match the filters';
+
+  @override
+  String accountsPaidOn(String date) {
+    return 'Paid on $date';
+  }
+
+  @override
+  String get accountsTypeInstallment => 'Installment';
+
+  @override
+  String get accountsTypeGracePeriod => 'Grace';
+
+  @override
+  String accountsSummaryPaid(int count) {
+    return 'Paid: $count';
+  }
+
+  @override
+  String accountsSummaryCurrent(int count) {
+    return 'Current: $count';
+  }
+
+  @override
+  String accountsSummaryOverdue(int count) {
+    return 'Overdue: $count';
+  }
+
+  @override
+  String get accountsTotalCollected => 'Collected';
+
+  @override
+  String get accountsTotalProfits => 'Profits';
+
+  @override
+  String get accountsTotalOperations => 'Operations';
+
+  @override
+  String get accountsOverdueClientsTitle => 'Overdue Clients';
+
+  @override
+  String accountsOverdueDays(int days) {
+    return '$days days overdue';
+  }
+
+  @override
+  String accountsOverdueItemsCount(int count) {
+    return '$count items';
+  }
+
+  @override
+  String get accountsPayInstallment => 'Pay Installment';
+
+  @override
+  String get accountsPayGracePeriod => 'Pay Grace Period';
+
+  @override
+  String get accountsPrintReport => 'Print Report';
+
+  @override
+  String get accountsReportTitle => 'Accounts Report';
+
+  @override
+  String get accountsReportPeriod => 'Period';
+
+  @override
+  String get accountsReportAllPeriods => 'All Periods';
+
+  @override
+  String get accountsReportGenerated => 'Generated on';
+
+  @override
+  String get accountsPdfColClient => 'Client Name';
+
+  @override
+  String get accountsPdfColPhone => 'Phone';
+
+  @override
+  String get accountsPdfColItemName => 'Item Name';
+
+  @override
+  String get accountsPdfColType => 'Type';
+
+  @override
+  String get accountsPdfColDueDate => 'Due Date';
+
+  @override
+  String get accountsPdfColStatus => 'Status';
+
+  @override
+  String get accountsPdfColAmount => 'Amount';
+
+  @override
+  String get accountsPdfTotalCollected => 'Collected';
+
+  @override
+  String get accountsPdfTotalProfits => 'Profits';
+
+  @override
+  String get accountsPdfOperationsCount => 'Operations';
+
+  @override
+  String accountsPdfOverdueSummaryItem(int count) {
+    return '$count overdue item(s)';
+  }
+
+  @override
+  String get accountsPdfTotalOverdue => 'Total Overdue';
+
+  @override
+  String get accountsPdfStatusUpcoming => 'Upcoming';
+
+  @override
+  String get accountsPdfStatusCurrent => 'Current';
+
+  @override
+  String get accountsPdfStatusGraceWindow => 'Grace Window';
+
+  @override
+  String get accountsPdfStatusOverdue => 'Overdue';
+
+  @override
+  String get accountsPdfStatusPaid => 'Paid';
+
+  @override
+  String get accountsPdfStatusReversed => 'Reversed';
+
+  @override
+  String get accountsPdfTypeInstallment => 'Installment';
+
+  @override
+  String get accountsPdfTypeGracePeriod => 'Grace Period';
+
+  @override
+  String get commonOfflineBanner => 'No internet connection';
 }

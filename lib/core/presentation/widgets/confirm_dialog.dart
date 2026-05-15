@@ -18,6 +18,7 @@ Future<bool> showConfirmDialog(
     builder: (ctx) => AlertDialog(
       title: Text(title),
       content: Text(message),
+      actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
       actions: [
         Row(
           children: [

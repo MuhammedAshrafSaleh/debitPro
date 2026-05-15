@@ -108,18 +108,4 @@ class GracePeriodRepositoryImpl implements GracePeriodRepository {
     }
   }
 
-  @override
-  Future<Either<Failure, void>> payGracePeriod(String gracePeriodId) async {
-    final offline = await _checkNetwork<void>();
-    if (offline != null) return offline;
-    try {
-      await _dataSource.payGracePeriod(gracePeriodId);
-      return const Right(null);
-    } on ServerException catch (e) {
-      _log.e('payGracePeriod', error: e);
-      return Left(ServerFailure(e.message));
-    } on NetworkException {
-      return Left(NetworkFailure('لا يوجد اتصال بالإنترنت'));
-    }
-  }
 }

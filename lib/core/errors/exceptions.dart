@@ -28,3 +28,19 @@ class CacheException implements Exception {
   const CacheException([this.message = 'حدث خطأ في التخزين المؤقت']);
   final String message;
 }
+
+class AlreadyPaidException implements Exception {
+  const AlreadyPaidException([this.message = 'تم دفع هذه الدفعة مسبقاً']);
+  final String message;
+
+  @override
+  String toString() => 'AlreadyPaidException: $message';
+}
+
+class EditLockedException implements Exception {
+  const EditLockedException([this.message = 'لا يمكن تعديل هذا السجل بعد أول دفعة']);
+  final String message;
+
+  @override
+  String toString() => 'EditLockedException: $message';
+}

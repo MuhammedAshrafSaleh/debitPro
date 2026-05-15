@@ -6,7 +6,7 @@ import '../../domain/entities/grace_period_entity.dart';
 
 enum GracePeriodActionStatus { idle, loading, success, failure }
 
-enum GracePeriodActionType { none, payGracePeriod, payOfficeCommission }
+enum GracePeriodActionType { none, payOfficeCommission }
 
 abstract class ClientGracePeriodsState extends Equatable {
   const ClientGracePeriodsState();

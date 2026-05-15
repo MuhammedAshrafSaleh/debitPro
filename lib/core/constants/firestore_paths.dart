@@ -14,6 +14,9 @@ class FirestorePaths {
   static String gracePeriod(String uid, String gracePeriodId) => 'users/$uid/gracePeriods/$gracePeriodId';
   static String transactions(String uid) => 'users/$uid/transactions';
   static String transaction(String uid, String transactionId) => 'users/$uid/transactions/$transactionId';
-  static String monthlyAgg(String uid, String yearMonth) => 'users/$uid/aggregates/monthly/$yearMonth';
+  // Monthly aggregates share the `aggregates` collection with `allTime`,
+  // identified by the YYYY-MM document id (e.g. `aggregates/2024-01`).
+  // Single-document Firestore paths must have an even segment count.
+  static String monthlyAgg(String uid, String yearMonth) => 'users/$uid/aggregates/$yearMonth';
   static String allTimeAgg(String uid) => 'users/$uid/aggregates/allTime';
 }

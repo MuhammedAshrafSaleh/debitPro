@@ -30,18 +30,32 @@ Future<bool> showDestructiveBottomSheet(
               ),
             ),
             const SizedBox(height: 24),
-            FilledButton(
-              style: FilledButton.styleFrom(
-                backgroundColor: Theme.of(ctx).colorScheme.error,
-                foregroundColor: Theme.of(ctx).colorScheme.onError,
-              ),
-              onPressed: () => Navigator.of(ctx).pop(true),
-              child: Text(confirmLabel),
-            ),
-            const SizedBox(height: 8),
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(false),
-              child: Text(cancelLabel),
+            Row(
+              children: [
+                Expanded(
+                  child: TextButton(
+                    style: TextButton.styleFrom(minimumSize: const Size(0, 48)),
+                    onPressed: () => Navigator.of(ctx).pop(false),
+                    child: Text(cancelLabel),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: FilledButton(
+                    style: FilledButton.styleFrom(
+                      minimumSize: const Size(0, 48),
+                      backgroundColor: Theme.of(ctx).colorScheme.error,
+                      foregroundColor: Theme.of(ctx).colorScheme.onError,
+                    ),
+                    onPressed: () => Navigator.of(ctx).pop(true),
+                    child: Text(
+                      confirmLabel,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

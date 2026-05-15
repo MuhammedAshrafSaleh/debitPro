@@ -25,6 +25,7 @@ class EditAccountCubit extends Cubit<EditAccountState> {
     }
     emit(const EditAccountLoading());
     final result = await _updateDisplayName(displayName.trim());
+    if (isClosed) return;
     result.fold(
       (failure) => emit(EditAccountFailure(serverMessage: failure.message)),
       (_) => emit(const EditAccountSuccess(EditAccountSuccessType.displayName)),
@@ -50,6 +51,7 @@ class EditAccountCubit extends Cubit<EditAccountState> {
         currentPassword: currentPassword,
       ),
     );
+    if (isClosed) return;
     result.fold(
       (failure) => emit(EditAccountFailure(serverMessage: failure.message)),
       (_) => emit(const EditAccountSuccess(EditAccountSuccessType.email)),
@@ -80,6 +82,7 @@ class EditAccountCubit extends Cubit<EditAccountState> {
         newPassword: newPassword,
       ),
     );
+    if (isClosed) return;
     result.fold(
       (failure) => emit(EditAccountFailure(serverMessage: failure.message)),
       (_) => emit(const EditAccountSuccess(EditAccountSuccessType.password)),

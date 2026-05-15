@@ -46,6 +46,7 @@ class AddGracePeriodCubit extends Cubit<AddGracePeriodState> {
         notes: notes?.trim().isEmpty == true ? null : notes?.trim(),
       ),
     );
+    if (isClosed) return;
 
     result.fold(
       (failure) => emit(state.copyWith(

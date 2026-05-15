@@ -51,9 +51,7 @@ import '../../features/installments/domain/usecases/add_installment_use_case.dar
 import '../../features/installments/domain/usecases/delete_installment_use_case.dart';
 import '../../features/installments/domain/usecases/edit_installment_use_case.dart';
 import '../../features/installments/domain/usecases/get_installment_with_payments_use_case.dart';
-import '../../features/installments/domain/usecases/pay_installment_payment_use_case.dart';
 import '../../features/installments/domain/usecases/pay_office_commission_use_case.dart';
-import '../../features/installments/domain/usecases/reverse_installment_payment_use_case.dart';
 import '../../features/installments/domain/usecases/watch_installments_for_client_use_case.dart';
 import '../../features/installments/presentation/cubit/add_installment_cubit.dart';
 import '../../features/installments/presentation/cubit/client_installments_cubit.dart';
@@ -66,11 +64,33 @@ import '../../features/grace_periods/domain/usecases/add_grace_period_use_case.d
 import '../../features/grace_periods/domain/usecases/edit_grace_period_use_case.dart';
 import '../../features/grace_periods/domain/usecases/get_grace_period_use_case.dart';
 import '../../features/grace_periods/domain/usecases/pay_grace_period_office_commission_use_case.dart';
-import '../../features/grace_periods/domain/usecases/pay_grace_period_use_case.dart';
 import '../../features/grace_periods/domain/usecases/watch_grace_periods_for_client_use_case.dart';
 import '../../features/grace_periods/presentation/cubit/add_grace_period_cubit.dart';
 import '../../features/grace_periods/presentation/cubit/client_grace_periods_cubit.dart';
 import '../../features/grace_periods/presentation/cubit/edit_grace_period_cubit.dart';
+import '../../features/payments/data/datasources/firestore_payment_datasource.dart';
+import '../../features/payments/data/datasources/status_refresh_datasource.dart';
+import '../../features/payments/data/repositories/payment_repository_impl.dart';
+import '../../features/payments/domain/repositories/payment_repository.dart';
+import '../../features/payments/domain/usecases/get_transactions_use_case.dart';
+import '../../features/payments/domain/usecases/pay_grace_period_use_case.dart' as pay_use;
+import '../../features/payments/domain/usecases/pay_installment_payment_use_case.dart' as pay_use_inst;
+import '../../features/payments/domain/usecases/refresh_payment_statuses_use_case.dart';
+import '../../features/payments/domain/usecases/reverse_payment_use_case.dart';
+import '../../features/payments/domain/usecases/watch_transactions_for_client_use_case.dart';
+import '../../features/payments/presentation/bloc/payment_bloc.dart';
+import '../../features/accounts/data/datasources/firestore_accounts_datasource.dart';
+import '../../features/accounts/data/repositories/accounts_repository_impl.dart';
+import '../../features/accounts/domain/repositories/accounts_repository.dart';
+import '../../features/accounts/domain/usecases/get_accounts_list_use_case.dart';
+import '../../features/accounts/domain/usecases/get_transactions_pdf_use_case.dart';
+import '../../features/accounts/presentation/cubit/accounts_cubit.dart';
+import '../../features/dashboard/data/datasources/firestore_dashboard_datasource.dart';
+import '../../features/dashboard/data/repositories/dashboard_repository_impl.dart';
+import '../../features/dashboard/domain/repositories/dashboard_repository.dart';
+import '../../features/dashboard/domain/usecases/get_dashboard_data_use_case.dart';
+import '../../features/dashboard/domain/usecases/get_recent_transactions_use_case.dart';
+import '../../features/dashboard/presentation/cubit/dashboard_cubit.dart';
 
 final sl = GetIt.instance;
 
@@ -196,13 +216,11 @@ void initInstallments() {
   sl.registerFactory(() => PayOfficeCommissionUseCase(sl()));
   sl.registerFactory(() => WatchInstallmentsForClientUseCase(sl()));
   sl.registerFactory(() => DeleteInstallmentUseCase(sl()));
-  sl.registerFactory(() => PayInstallmentPaymentUseCase(sl()));
-  sl.registerFactory(() => ReverseInstallmentPaymentUseCase(sl()));
 
   // Cubits
   sl.registerFactory(() => AddInstallmentCubit(sl()));
   sl.registerFactory(() => EditInstallmentCubit(sl(), sl()));
-  sl.registerFactory(() => InstallmentTrackingCubit(sl(), sl(), sl(), sl(), sl()));
+  sl.registerFactory(() => InstallmentTrackingCubit(sl(), sl(), sl()));
   sl.registerFactory(() => ClientInstallmentsCubit(sl()));
 }
 
@@ -222,17 +240,74 @@ void initGracePeriods() {
   sl.registerFactory(() => EditGracePeriodUseCase(sl()));
   sl.registerFactory(() => GetGracePeriodUseCase(sl()));
   sl.registerFactory(() => PayGracePeriodOfficeCommissionUseCase(sl()));
-  sl.registerFactory(() => PayGracePeriodUseCase(sl()));
   sl.registerFactory(() => WatchGracePeriodsForClientUseCase(sl()));
 
   // Cubits
   sl.registerFactory(() => AddGracePeriodCubit(sl()));
   sl.registerFactory(() => EditGracePeriodCubit(sl(), sl()));
-  sl.registerFactory(() => ClientGracePeriodsCubit(sl(), sl(), sl()));
+  sl.registerFactory(() => ClientGracePeriodsCubit(sl(), sl()));
 }
 
-void initPayments() {}
+void initPayments() {
+  // Data sources
+  sl.registerLazySingleton<PaymentRemoteDataSource>(
+    () => PaymentRemoteDataSourceImpl(sl(), sl()),
+  );
+  sl.registerLazySingleton<StatusRefreshDataSource>(
+    () => StatusRefreshDataSourceImpl(sl(), sl()),
+  );
 
-void initAccounts() {}
+  // Repository
+  sl.registerLazySingleton<PaymentRepository>(
+    () => PaymentRepositoryImpl(sl(), sl()),
+  );
 
-void initDashboard() {}
+  // Use cases
+  sl.registerFactory(() => pay_use_inst.PayInstallmentPaymentUseCase(sl()));
+  sl.registerFactory(() => pay_use.PayGracePeriodUseCase(sl()));
+  sl.registerFactory(() => ReversePaymentUseCase(sl()));
+  sl.registerFactory(() => GetTransactionsUseCase(sl()));
+  sl.registerFactory(() => WatchTransactionsForClientUseCase(sl()));
+  sl.registerFactory(() => RefreshPaymentStatusesUseCase(sl(), sl()));
+
+  // Bloc
+  sl.registerFactory(() => PaymentBloc(sl(), sl(), sl(), sl()));
+}
+
+void initAccounts() {
+  // Data source
+  sl.registerLazySingleton<AccountsRemoteDataSource>(
+    () => AccountsRemoteDataSourceImpl(sl(), sl()),
+  );
+
+  // Repository
+  sl.registerLazySingleton<AccountsRepository>(
+    () => AccountsRepositoryImpl(sl(), sl()),
+  );
+
+  // Use cases
+  sl.registerFactory(() => GetAccountsListUseCase(sl()));
+  sl.registerFactory(() => GetTransactionsPdfUseCase(sl()));
+
+  // Cubit
+  sl.registerFactory(() => AccountsCubit(sl()));
+}
+
+void initDashboard() {
+  // Data source
+  sl.registerLazySingleton<DashboardRemoteDataSource>(
+    () => DashboardRemoteDataSourceImpl(sl(), sl()),
+  );
+
+  // Repository
+  sl.registerLazySingleton<DashboardRepository>(
+    () => DashboardRepositoryImpl(sl(), sl()),
+  );
+
+  // Use cases
+  sl.registerFactory(() => GetDashboardDataUseCase(sl()));
+  sl.registerFactory(() => GetRecentTransactionsUseCase(sl()));
+
+  // Cubit
+  sl.registerFactory(() => DashboardCubit(sl()));
+}

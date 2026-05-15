@@ -59,6 +59,7 @@ class AddInstallmentCubit extends Cubit<AddInstallmentState> {
         startDate: startDate,
       ),
     );
+    if (isClosed) return;
 
     result.fold(
       (failure) => emit(state.copyWith(

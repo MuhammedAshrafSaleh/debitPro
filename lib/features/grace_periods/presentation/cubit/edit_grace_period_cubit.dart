@@ -19,6 +19,7 @@ class EditGracePeriodCubit extends Cubit<EditGracePeriodState> {
   Future<void> load(String gracePeriodId) async {
     emit(state.copyWith(status: EditGracePeriodStatus.loading));
     final result = await _getGracePeriod(gracePeriodId);
+    if (isClosed) return;
     result.fold(
       (failure) => emit(state.copyWith(
         status: EditGracePeriodStatus.failure,
@@ -52,6 +53,7 @@ class EditGracePeriodCubit extends Cubit<EditGracePeriodState> {
         notes: notes?.trim().isEmpty == true ? null : notes?.trim(),
       ),
     );
+    if (isClosed) return;
 
     result.fold(
       (failure) => emit(state.copyWith(

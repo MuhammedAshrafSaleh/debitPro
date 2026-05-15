@@ -13,6 +13,7 @@ class ForgotPasswordCubit extends Cubit<ForgotPasswordState> {
   Future<void> sendReset({required String email}) async {
     emit(const ForgotPasswordLoading());
     final result = await _sendReset(SendPasswordResetParams(email: email));
+    if (isClosed) return;
     result.fold(
       (failure) => emit(ForgotPasswordFailure(failure.message)),
       (_) => emit(const ForgotPasswordEmailSent()),

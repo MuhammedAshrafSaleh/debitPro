@@ -8,6 +8,9 @@ import '../../../../config/l10n/app_localizations.dart';
 import '../../../../core/presentation/widgets/app_snackbar.dart';
 import '../../../../core/utils/currency_utils.dart';
 import '../../../../core/utils/status_utils.dart';
+import '../../../payments/presentation/bloc/payment_bloc.dart';
+import '../../../payments/presentation/bloc/payment_event.dart';
+import '../../../payments/presentation/bloc/payment_state.dart';
 import '../../domain/entities/grace_period_entity.dart';
 import '../cubit/client_grace_periods_cubit.dart';
 import '../cubit/client_grace_periods_state.dart';
@@ -115,6 +118,7 @@ class GracePeriodCard extends StatelessWidget {
 
   void _showDetailSheet(BuildContext context) {
     final cubit = context.read<ClientGracePeriodsCubit>();
+    final paymentBloc = context.read<PaymentBloc>();
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -122,8 +126,11 @@ class GracePeriodCard extends StatelessWidget {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (ctx) => BlocProvider.value(
-        value: cubit,
+      builder: (ctx) => MultiBlocProvider(
+        providers: [
+          BlocProvider.value(value: cubit),
+          BlocProvider.value(value: paymentBloc),
+        ],
         child: _GracePeriodDetailSheet(
           gracePeriod: gracePeriod,
           parentContext: context,
@@ -191,23 +198,36 @@ class _GracePeriodDetailSheet extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
 
-    return BlocListener<ClientGracePeriodsCubit, ClientGracePeriodsState>(
-      listenWhen: (prev, curr) =>
-          curr is ClientGracePeriodsLoaded &&
-          curr.actionStatus != GracePeriodActionStatus.idle,
-      listener: (ctx, state) {
-        if (state is! ClientGracePeriodsLoaded) return;
-        if (state.actionStatus == GracePeriodActionStatus.success) {
-          final msg =
-              state.actionType == GracePeriodActionType.payGracePeriod
-                  ? l10n.gracePeriodPaySuccess
-                  : l10n.gracePeriodCommissionPaidSuccess;
-          AppSnackbar.success(ctx, msg);
-          Navigator.of(ctx).pop();
-        } else if (state.actionStatus == GracePeriodActionStatus.failure) {
-          AppSnackbar.error(ctx, state.actionMessage ?? l10n.commonError);
-        }
-      },
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<ClientGracePeriodsCubit, ClientGracePeriodsState>(
+          listenWhen: (prev, curr) =>
+              curr is ClientGracePeriodsLoaded &&
+              curr.actionStatus != GracePeriodActionStatus.idle,
+          listener: (ctx, state) {
+            if (state is! ClientGracePeriodsLoaded) return;
+            if (state.actionStatus == GracePeriodActionStatus.success) {
+              AppSnackbar.success(ctx, l10n.gracePeriodCommissionPaidSuccess);
+              Navigator.of(ctx).pop();
+            } else if (state.actionStatus == GracePeriodActionStatus.failure) {
+              AppSnackbar.error(
+                ctx,
+                state.actionMessage ?? l10n.commonError,
+              );
+            }
+          },
+        ),
+        BlocListener<PaymentBloc, PaymentState>(
+          listenWhen: (prev, curr) =>
+              prev.actionStatus != curr.actionStatus &&
+              curr.actionStatus != PaymentActionStatus.idle,
+          listener: (ctx, state) {
+            if (state.actionStatus == PaymentActionStatus.success) {
+              if (Navigator.of(ctx).canPop()) Navigator.of(ctx).pop();
+            }
+          },
+        ),
+      ],
       child: BlocBuilder<ClientGracePeriodsCubit, ClientGracePeriodsState>(
         buildWhen: (prev, curr) =>
             curr is ClientGracePeriodsLoaded &&
@@ -217,24 +237,30 @@ class _GracePeriodDetailSheet extends StatelessWidget {
         builder: (ctx, state) {
           final loaded =
               state is ClientGracePeriodsLoaded ? state : null;
-          final isLoading =
-              loaded?.actionStatus == GracePeriodActionStatus.loading;
-          final isPayGpLoading = isLoading &&
-              loaded?.actionType == GracePeriodActionType.payGracePeriod;
-          final isCommissionLoading = isLoading &&
-              loaded?.actionType ==
-                  GracePeriodActionType.payOfficeCommission;
+          final isCommissionLoading =
+              loaded?.actionStatus == GracePeriodActionStatus.loading &&
+                  loaded?.actionType ==
+                      GracePeriodActionType.payOfficeCommission;
 
-          return Padding(
-            padding: EdgeInsetsDirectional.only(
-              start: 16,
-              end: 16,
-              top: 12,
-              bottom: MediaQuery.viewInsetsOf(ctx).bottom +
-                  MediaQuery.viewPaddingOf(ctx).bottom +
-                  24,
-            ),
-            child: Column(
+          return BlocBuilder<PaymentBloc, PaymentState>(
+            buildWhen: (prev, curr) =>
+                prev.actionStatus != curr.actionStatus,
+            builder: (ctx, payState) {
+              final isPayGpLoading =
+                  payState.actionStatus == PaymentActionStatus.loading &&
+                      payState.actionKind == PaymentActionKind.pay;
+              final isLoading = isPayGpLoading || isCommissionLoading;
+
+              return Padding(
+                padding: EdgeInsetsDirectional.only(
+                  start: 16,
+                  end: 16,
+                  top: 12,
+                  bottom: MediaQuery.viewInsetsOf(ctx).bottom +
+                      MediaQuery.viewPaddingOf(ctx).bottom +
+                      24,
+                ),
+                child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -435,8 +461,10 @@ class _GracePeriodDetailSheet extends StatelessWidget {
                     ),
                   ),
                 ],
-              ],
-            ),
+                  ],
+                ),
+              );
+            },
           );
         },
       ),
@@ -457,14 +485,32 @@ class _GracePeriodDetailSheet extends StatelessWidget {
         content: Text(isCommission
             ? l10n.gracePeriodCommissionConfirmMessage
             : l10n.gracePeriodPayConfirmMessage),
+        actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dCtx).pop(false),
-            child: Text(l10n.commonCancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(dCtx).pop(true),
-            child: Text(l10n.commonConfirm),
+          Row(
+            children: [
+              Expanded(
+                child: TextButton(
+                  style:
+                      TextButton.styleFrom(minimumSize: const Size(0, 48)),
+                  onPressed: () => Navigator.of(dCtx).pop(false),
+                  child: Text(l10n.commonCancel),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: FilledButton(
+                  style: FilledButton.styleFrom(
+                      minimumSize: const Size(0, 48)),
+                  onPressed: () => Navigator.of(dCtx).pop(true),
+                  child: Text(
+                    l10n.commonConfirm,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -475,9 +521,12 @@ class _GracePeriodDetailSheet extends StatelessWidget {
             .read<ClientGracePeriodsCubit>()
             .payOfficeCommission(gracePeriod.id);
       } else {
-        context
-            .read<ClientGracePeriodsCubit>()
-            .payGracePeriod(gracePeriod.id);
+        context.read<PaymentBloc>().add(
+              PayGracePeriodEvent(
+                gracePeriod: gracePeriod,
+                now: DateTime.now(),
+              ),
+            );
       }
     }
   }

@@ -38,6 +38,7 @@ class VerifyEmailCubit extends Cubit<VerifyEmailState> {
 
   Future<void> _checkVerified() async {
     final result = await _reloadUser(NoParams());
+    if (isClosed) return;
     result.fold(
       (_) {},
       (user) {
@@ -54,6 +55,7 @@ class VerifyEmailCubit extends Cubit<VerifyEmailState> {
   Future<void> resend() async {
     emit(const VerifyEmailResendLoading());
     final result = await _sendVerification(NoParams());
+    if (isClosed) return;
     result.fold(
       (failure) => emit(VerifyEmailResendFailure(failure.message)),
       (_) => emit(const VerifyEmailResendSuccess()),

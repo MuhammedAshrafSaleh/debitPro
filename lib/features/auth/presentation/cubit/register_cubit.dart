@@ -19,6 +19,7 @@ class RegisterCubit extends Cubit<RegisterState> {
     final result = await _register(
       RegisterParams(displayName: displayName, email: email, password: password),
     );
+    if (isClosed) return;
     result.fold(
       (failure) => emit(RegisterFailure(failure.message)),
       (_) => emit(const RegisterSuccess()),

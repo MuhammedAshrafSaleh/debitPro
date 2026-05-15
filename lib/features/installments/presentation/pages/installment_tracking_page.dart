@@ -12,6 +12,10 @@ import '../../../../core/presentation/widgets/confirm_dialog.dart';
 import '../../../../core/presentation/widgets/status_badge.dart';
 import '../../../../core/utils/currency_utils.dart';
 import '../../../../core/utils/status_utils.dart';
+import '../../../payments/domain/entities/transaction_entity.dart';
+import '../../../payments/presentation/bloc/payment_bloc.dart';
+import '../../../payments/presentation/bloc/payment_event.dart';
+import '../../../payments/presentation/bloc/payment_state.dart';
 import '../../domain/entities/installment_entity.dart';
 import '../../domain/entities/payment_entity.dart';
 import '../cubit/installment_tracking_cubit.dart';
@@ -24,9 +28,14 @@ class InstallmentTrackingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) =>
-          sl<InstallmentTrackingCubit>()..load(installmentId),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) =>
+              sl<InstallmentTrackingCubit>()..load(installmentId),
+        ),
+        BlocProvider(create: (_) => sl<PaymentBloc>()),
+      ],
       child: _InstallmentTrackingView(installmentId: installmentId),
     );
   }
@@ -41,21 +50,39 @@ class _InstallmentTrackingView extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
 
-    return BlocConsumer<InstallmentTrackingCubit, InstallmentTrackingState>(
-      listener: (context, state) {
-        if (state is InstallmentTrackingDeleted) {
-          AppSnackbar.success(context, l10n.installmentsDeleteSuccess);
-          context.pop();
-        } else if (state is InstallmentTrackingPaymentSuccess) {
-          AppSnackbar.success(context, l10n.installmentsPaySuccess);
-        } else if (state is InstallmentTrackingReverseSuccess) {
-          AppSnackbar.success(context, l10n.installmentsReverseSuccess);
-        } else if (state is InstallmentTrackingFailure) {
-          AppSnackbar.error(context, state.message);
-        } else if (state is InstallmentTrackingPaymentError) {
-          AppSnackbar.error(context, state.message);
-        }
-      },
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<InstallmentTrackingCubit, InstallmentTrackingState>(
+          listener: (context, state) {
+            if (state is InstallmentTrackingDeleted) {
+              AppSnackbar.success(context, l10n.installmentsDeleteSuccess);
+              context.pop();
+            } else if (state is InstallmentTrackingFailure) {
+              AppSnackbar.error(context, state.message);
+            }
+          },
+        ),
+        BlocListener<PaymentBloc, PaymentState>(
+          listenWhen: (prev, curr) =>
+              prev.actionStatus != curr.actionStatus &&
+              curr.actionStatus != PaymentActionStatus.idle,
+          listener: (context, state) {
+            if (state.actionStatus == PaymentActionStatus.success) {
+              final msg = state.actionKind == PaymentActionKind.reverse
+                  ? l10n.installmentsReverseSuccess
+                  : l10n.installmentsPaySuccess;
+              AppSnackbar.success(context, msg);
+              context.read<InstallmentTrackingCubit>().load(installmentId);
+            } else if (state.actionStatus == PaymentActionStatus.failure) {
+              AppSnackbar.error(
+                context,
+                state.actionMessage ?? l10n.commonError,
+              );
+            }
+          },
+        ),
+      ],
+      child: BlocBuilder<InstallmentTrackingCubit, InstallmentTrackingState>(
       builder: (context, state) {
         if (state is InstallmentTrackingInitial ||
             state is InstallmentTrackingLoading) {
@@ -84,18 +111,6 @@ class _InstallmentTrackingView extends StatelessWidget {
           installment = state.installment;
           payments = state.payments;
           isCommissionLoading = true;
-        } else if (state is InstallmentTrackingPaymentError) {
-          installment = state.installment;
-          payments = state.payments;
-          isCommissionLoading = false;
-        } else if (state is InstallmentTrackingPaymentSuccess) {
-          installment = state.installment;
-          payments = state.payments;
-          isCommissionLoading = false;
-        } else if (state is InstallmentTrackingReverseSuccess) {
-          installment = state.installment;
-          payments = state.payments;
-          isCommissionLoading = false;
         } else {
           return const SizedBox.shrink();
         }
@@ -152,6 +167,7 @@ class _InstallmentTrackingView extends StatelessWidget {
           ),
         );
       },
+      ),
     );
   }
 
@@ -470,7 +486,12 @@ class _DismissiblePaymentRow extends StatelessWidget {
             confirmLabel: l10n.installmentsPayAction,
           );
           if (confirmed && context.mounted) {
-            context.read<InstallmentTrackingCubit>().payPayment(payment);
+            context.read<PaymentBloc>().add(
+                  PayInstallmentPaymentEvent(
+                    payment: payment,
+                    now: DateTime.now(),
+                  ),
+                );
           }
         } else if (direction == DismissDirection.startToEnd && canReverse) {
           final confirmed = await showConfirmDialog(
@@ -480,7 +501,14 @@ class _DismissiblePaymentRow extends StatelessWidget {
             confirmLabel: l10n.installmentsReverseAction,
           );
           if (confirmed && context.mounted) {
-            context.read<InstallmentTrackingCubit>().reversePayment(payment);
+            context.read<PaymentBloc>().add(
+                  ReversePaymentEvent(
+                    transactionId: null,
+                    relatedId: payment.id,
+                    relatedType: RelatedType.installmentPayment,
+                    now: DateTime.now(),
+                  ),
+                );
           }
         }
         return false;

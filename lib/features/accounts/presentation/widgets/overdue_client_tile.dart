@@ -32,14 +32,20 @@ class OverdueClientTile extends StatelessWidget {
             children: [
               Icon(Icons.error_outline, size: 14, color: cs.error),
               const SizedBox(width: 4),
-              Text(
-                l10n.accountsOverdueDays(info.daysOverdue),
-                style: tt.labelSmall?.copyWith(color: cs.error),
+              Flexible(
+                child: Text(
+                  l10n.accountsOverdueDays(info.daysOverdue),
+                  style: tt.labelSmall?.copyWith(color: cs.error),
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
               const SizedBox(width: 10),
-              Text(
-                l10n.accountsOverdueItemsCount(info.overdueItemsCount),
-                style: tt.labelSmall?.copyWith(color: cs.onSurfaceVariant),
+              Flexible(
+                child: Text(
+                  l10n.accountsOverdueItemsCount(info.overdueItemsCount),
+                  style: tt.labelSmall?.copyWith(color: cs.onSurfaceVariant),
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
             ],
           ),

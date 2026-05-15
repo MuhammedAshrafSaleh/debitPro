@@ -17,33 +17,38 @@ Future<bool> showConfirmDialog(
     context: context,
     builder: (ctx) => AlertDialog(
       title: Text(title),
-      content: Text(message),
-      actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-      actions: [
-        Row(
-          children: [
-            Expanded(
-              child: TextButton(
-                style: TextButton.styleFrom(minimumSize: const Size(0, 48)),
-                onPressed: () => Navigator.of(ctx).pop(false),
-                child: Text(resolvedCancel),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: FilledButton(
-                style: FilledButton.styleFrom(minimumSize: const Size(0, 48)),
-                onPressed: () => Navigator.of(ctx).pop(true),
-                child: Text(
-                  confirmLabel,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(message),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: TextButton(
+                  style: TextButton.styleFrom(minimumSize: const Size(0, 48)),
+                  onPressed: () => Navigator.of(ctx).pop(false),
+                  child: Text(resolvedCancel),
                 ),
               ),
-            ),
-          ],
-        ),
-      ],
+              const SizedBox(width: 8),
+              Expanded(
+                child: FilledButton(
+                  style:
+                      FilledButton.styleFrom(minimumSize: const Size(0, 48)),
+                  onPressed: () => Navigator.of(ctx).pop(true),
+                  child: Text(
+                    confirmLabel,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     ),
   );
   return result ?? false;

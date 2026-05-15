@@ -250,21 +250,43 @@ class _PayButton extends StatelessWidget {
               ? l10n.installmentsPayConfirmTitle
               : l10n.gracePeriodPayConfirmTitle,
         ),
-        content: Text(
-          item.kind == AccountsItemKind.installmentPayment
-              ? l10n.installmentsPayConfirmMessage
-              : l10n.gracePeriodPayConfirmMessage,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              item.kind == AccountsItemKind.installmentPayment
+                  ? l10n.installmentsPayConfirmMessage
+                  : l10n.gracePeriodPayConfirmMessage,
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: TextButton(
+                    style: TextButton.styleFrom(
+                        minimumSize: const Size(0, 48)),
+                    onPressed: () => Navigator.of(ctx).pop(false),
+                    child: Text(l10n.commonCancel),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: FilledButton(
+                    style: FilledButton.styleFrom(
+                        minimumSize: const Size(0, 48)),
+                    onPressed: () => Navigator.of(ctx).pop(true),
+                    child: Text(
+                      l10n.commonConfirm,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text(l10n.commonCancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: Text(l10n.commonConfirm),
-          ),
-        ],
       ),
     );
     if (confirmed != true || !context.mounted) return;

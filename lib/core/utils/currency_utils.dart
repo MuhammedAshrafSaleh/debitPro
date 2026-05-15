@@ -12,9 +12,10 @@ class CurrencyUtils {
     // even in the Arabic locale (PRD §3.3 — no Hindi/Arabic-Indic digits).
     final formatter = NumberFormat.currency(
       locale: 'en_US',
-      symbol: 'ر.س',
+      symbol: languageCode == 'ar' ? 'ر.س' : '',
       decimalDigits: 2,
     );
-    return formatter.format(amount);
+    final formatted = formatter.format(amount).trim();
+    return languageCode == 'ar' ? formatted : '$formatted SAR';
   }
 }

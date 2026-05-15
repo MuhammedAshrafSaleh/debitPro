@@ -482,37 +482,41 @@ class _GracePeriodDetailSheet extends StatelessWidget {
         title: Text(isCommission
             ? l10n.gracePeriodCommissionConfirmTitle
             : l10n.gracePeriodPayConfirmTitle),
-        content: Text(isCommission
-            ? l10n.gracePeriodCommissionConfirmMessage
-            : l10n.gracePeriodPayConfirmMessage),
-        actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        actions: [
-          Row(
-            children: [
-              Expanded(
-                child: TextButton(
-                  style:
-                      TextButton.styleFrom(minimumSize: const Size(0, 48)),
-                  onPressed: () => Navigator.of(dCtx).pop(false),
-                  child: Text(l10n.commonCancel),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: FilledButton(
-                  style: FilledButton.styleFrom(
-                      minimumSize: const Size(0, 48)),
-                  onPressed: () => Navigator.of(dCtx).pop(true),
-                  child: Text(
-                    l10n.commonConfirm,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(isCommission
+                ? l10n.gracePeriodCommissionConfirmMessage
+                : l10n.gracePeriodPayConfirmMessage),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: TextButton(
+                    style: TextButton.styleFrom(
+                        minimumSize: const Size(0, 48)),
+                    onPressed: () => Navigator.of(dCtx).pop(false),
+                    child: Text(l10n.commonCancel),
                   ),
                 ),
-              ),
-            ],
-          ),
-        ],
+                const SizedBox(width: 8),
+                Expanded(
+                  child: FilledButton(
+                    style: FilledButton.styleFrom(
+                        minimumSize: const Size(0, 48)),
+                    onPressed: () => Navigator.of(dCtx).pop(true),
+                    child: Text(
+                      l10n.commonConfirm,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
     if (confirmed == true && context.mounted) {

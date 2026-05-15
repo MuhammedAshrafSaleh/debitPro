@@ -116,21 +116,21 @@ class AccountsPdfGenerator {
     pw.TextStyle bold,
   ) {
     const widths = <int, pw.TableColumnWidth>{
-      0: pw.FlexColumnWidth(3), // اسم العميل
-      1: pw.FlexColumnWidth(3), // اسم السجل
-      2: pw.FlexColumnWidth(2), // النوع
-      3: pw.FlexColumnWidth(2), // تاريخ الدفع
-      4: pw.FlexColumnWidth(2), // الحالة
-      5: pw.FlexColumnWidth(2), // المبلغ
+      0: pw.FlexColumnWidth(2), // المبلغ
+      1: pw.FlexColumnWidth(2), // الحالة
+      2: pw.FlexColumnWidth(2), // تاريخ الدفع
+      3: pw.FlexColumnWidth(2), // النوع
+      4: pw.FlexColumnWidth(3), // اسم السجل
+      5: pw.FlexColumnWidth(3), // اسم العميل
     };
 
     final headerLabels = [
-      l10n.accountsPdfColClient,
-      l10n.accountsPdfColItemName,
-      l10n.accountsPdfColType,
-      l10n.accountsPdfColDueDate,
-      l10n.accountsPdfColStatus,
       l10n.accountsPdfColAmount,
+      l10n.accountsPdfColStatus,
+      l10n.accountsPdfColDueDate,
+      l10n.accountsPdfColType,
+      l10n.accountsPdfColItemName,
+      l10n.accountsPdfColClient,
     ];
 
     final rows = <pw.TableRow>[_headerRow(headerLabels, colHeader, _headerBg)];
@@ -140,12 +140,12 @@ class AccountsPdfGenerator {
       rows.add(pw.TableRow(
         decoration: pw.BoxDecoration(color: i.isOdd ? _altRow : _white),
         children: [
-          _cell(tx.clientName, base),
-          _cell(tx.itemName, base),
-          _cell(_relatedTypeLabel(tx.relatedType), base),
-          _cell(_fmtDate(tx.paidDate), base),
-          _cell(_statusLabel(tx.status), base),
           _cell(CurrencyUtils.formatCurrency(tx.amount, locale), base),
+          _cell(_statusLabel(tx.status), base),
+          _cell(_fmtDate(tx.paidDate), base),
+          _cell(_relatedTypeLabel(tx.relatedType), base),
+          _cell(tx.itemName, base),
+          _cell(tx.clientName, base),
         ],
       ));
     }
@@ -208,17 +208,17 @@ class AccountsPdfGenerator {
     pw.TextStyle bold,
   ) {
     const widths = <int, pw.TableColumnWidth>{
-      0: pw.FlexColumnWidth(3), // اسم العميل
-      1: pw.FlexColumnWidth(2), // رقم الهاتف
-      2: pw.FlexColumnWidth(3), // اسم الدين
-      3: pw.FlexColumnWidth(2), // المبلغ
+      0: pw.FlexColumnWidth(2), // المبلغ
+      1: pw.FlexColumnWidth(3), // اسم الدين
+      2: pw.FlexColumnWidth(2), // رقم الهاتف
+      3: pw.FlexColumnWidth(3), // اسم العميل
     };
 
     final headerLabels = [
-      l10n.accountsPdfColClient,
-      l10n.accountsPdfColPhone,
-      l10n.accountsPdfColItemName,
       l10n.accountsPdfColAmount,
+      l10n.accountsPdfColItemName,
+      l10n.accountsPdfColPhone,
+      l10n.accountsPdfColClient,
     ];
 
     final rows = <pw.TableRow>[_headerRow(headerLabels, colHeader, _overdueHeaderBg)];
@@ -235,10 +235,10 @@ class AccountsPdfGenerator {
       rows.add(pw.TableRow(
         decoration: pw.BoxDecoration(color: rowIdx.isOdd ? _altRow : _white),
         children: [
-          _cell(name, base),
-          _cell(phone, base),
-          _cell(l10n.accountsPdfOverdueSummaryItem(info.overdueItemsCount), base),
           _cell(CurrencyUtils.formatCurrency(info.totalOverdueAmount, locale), base),
+          _cell(l10n.accountsPdfOverdueSummaryItem(info.overdueItemsCount), base),
+          _cell(phone, base),
+          _cell(name, base),
         ],
       ));
       totalOverdue += info.totalOverdueAmount;
@@ -248,10 +248,10 @@ class AccountsPdfGenerator {
     rows.add(pw.TableRow(
       decoration: const pw.BoxDecoration(color: _overdueBg),
       children: [
-        _cell('', bold),
-        _cell('', bold),
-        _cell(l10n.accountsPdfTotalOverdue, bold),
         _cell(CurrencyUtils.formatCurrency(totalOverdue, locale), bold),
+        _cell(l10n.accountsPdfTotalOverdue, bold),
+        _cell('', bold),
+        _cell('', bold),
       ],
     ));
 

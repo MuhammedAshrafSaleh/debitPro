@@ -19,19 +19,22 @@ class AddInstallmentCubit extends Cubit<AddInstallmentState> {
     required double profitAmount,
     required int durationMonths,
     required bool isOfficeClient,
+    required double discountPerMonth,
   }) {
     if (durationMonths <= 0) return;
-    final totalDebt = capital + profitAmount;
-    final monthlyAmount = totalDebt / durationMonths;
+    final effectiveProfitAmount = profitAmount - discountPerMonth * durationMonths;
+    final effectiveTotalDebt = capital + effectiveProfitAmount;
+    final effectiveMonthlyAmount = effectiveTotalDebt / durationMonths;
     final officeCommissionAmount = isOfficeClient
         ? capital * AppConstants.kOfficeCommissionRate
         : 0.0;
 
     emit(state.copyWith(
-      monthlyAmount: monthlyAmount,
-      totalDebt: totalDebt,
+      monthlyAmount: effectiveMonthlyAmount,
+      totalDebt: effectiveTotalDebt,
       durationMonths: durationMonths,
       officeCommissionAmount: officeCommissionAmount,
+      discountPerMonth: discountPerMonth,
     ));
   }
 
@@ -42,6 +45,7 @@ class AddInstallmentCubit extends Cubit<AddInstallmentState> {
     required String itemName,
     required double capital,
     required double profitAmount,
+    required double discountPerMonth,
     required int durationMonths,
     required DateTime startDate,
   }) async {
@@ -55,6 +59,7 @@ class AddInstallmentCubit extends Cubit<AddInstallmentState> {
         itemName: itemName.trim(),
         capital: capital,
         profitAmount: profitAmount,
+        discountPerMonth: discountPerMonth,
         durationMonths: durationMonths,
         startDate: startDate,
       ),

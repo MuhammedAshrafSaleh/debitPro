@@ -101,10 +101,11 @@ class InstallmentRemoteDataSourceImpl implements InstallmentRemoteDataSource {
     try {
       final isOffice = params.clientType == ClientType.office;
 
-      // Computed fields
-      final totalDebt = params.capital + params.profitAmount;
+      // Computed fields — discount is absorbed from profit, capital is unchanged
+      final effectiveProfitAmount = params.profitAmount - params.discountPerMonth * params.durationMonths;
+      final totalDebt = params.capital + effectiveProfitAmount;
       final monthlyAmount = totalDebt / params.durationMonths;
-      final profitPerPayment = params.profitAmount / params.durationMonths;
+      final profitPerPayment = effectiveProfitAmount / params.durationMonths;
       final officeCommissionAmount =
           isOffice ? params.capital * AppConstants.kOfficeCommissionRate : 0.0;
 
@@ -127,7 +128,8 @@ class InstallmentRemoteDataSourceImpl implements InstallmentRemoteDataSource {
         clientId: params.clientId,
         itemName: params.itemName,
         capital: params.capital,
-        profitAmount: params.profitAmount,
+        profitAmount: effectiveProfitAmount,
+        discountPerMonth: params.discountPerMonth,
         profitPerPayment: profitPerPayment,
         monthlyAmount: monthlyAmount,
         totalDebt: totalDebt,
@@ -255,10 +257,11 @@ class InstallmentRemoteDataSourceImpl implements InstallmentRemoteDataSource {
     try {
       final uid = _uid;
 
-      // Computed new values
-      final totalDebt = params.capital + params.profitAmount;
+      // Computed new values — discount absorbed from profit
+      final effectiveProfitAmount = params.profitAmount - params.discountPerMonth * params.durationMonths;
+      final totalDebt = params.capital + effectiveProfitAmount;
       final monthlyAmount = totalDebt / params.durationMonths;
-      final profitPerPayment = params.profitAmount / params.durationMonths;
+      final profitPerPayment = effectiveProfitAmount / params.durationMonths;
 
       final nextMonth = AppDateUtils.addMonths(params.startDate, 1);
       final firstPaymentDueDate = DateTime(
@@ -287,7 +290,8 @@ class InstallmentRemoteDataSourceImpl implements InstallmentRemoteDataSource {
       batch.update(_installmentsRef.doc(params.id), {
         'itemName': params.itemName,
         'capital': params.capital,
-        'profitAmount': params.profitAmount,
+        'profitAmount': effectiveProfitAmount,
+        'discountPerMonth': params.discountPerMonth,
         'profitPerPayment': profitPerPayment,
         'monthlyAmount': monthlyAmount,
         'totalDebt': totalDebt,

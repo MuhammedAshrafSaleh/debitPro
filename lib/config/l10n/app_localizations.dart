@@ -476,11 +476,29 @@ abstract class AppLocalizations {
   /// **'نسبتي'**
   String get installmentsProfit;
 
+  /// No description provided for @installmentsDiscountPerMonth.
+  ///
+  /// In ar, this message translates to:
+  /// **'الخصم الشهري'**
+  String get installmentsDiscountPerMonth;
+
+  /// No description provided for @installmentsDiscountTotal.
+  ///
+  /// In ar, this message translates to:
+  /// **'إجمالي الخصم'**
+  String get installmentsDiscountTotal;
+
   /// No description provided for @installmentsDuration.
   ///
   /// In ar, this message translates to:
   /// **'المدة (بالأشهر)'**
   String get installmentsDuration;
+
+  /// No description provided for @installmentsCustomDuration.
+  ///
+  /// In ar, this message translates to:
+  /// **'أو أدخل المدة يدوياً'**
+  String get installmentsCustomDuration;
 
   /// No description provided for @installmentsStartDate.
   ///
@@ -1382,6 +1400,12 @@ abstract class AppLocalizations {
   /// **'هل أنت متأكد من حذف هذا العميل؟ لا يمكن التراجع عن هذا الإجراء.'**
   String get clientsDeleteConfirmMessage;
 
+  /// No description provided for @clientsDeleteBlockedByPayments.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا يمكن حذف العميل لأن لديه دفعات مسجلة'**
+  String get clientsDeleteBlockedByPayments;
+
   /// No description provided for @clientsDeleteSuccess.
   ///
   /// In ar, this message translates to:
@@ -1753,6 +1777,30 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'لا يوجد اتصال بالإنترنت'**
   String get commonOfflineBanner;
+
+  /// No description provided for @qualityBadgeExcellent.
+  ///
+  /// In ar, this message translates to:
+  /// **'ممتاز'**
+  String get qualityBadgeExcellent;
+
+  /// No description provided for @qualityBadgeGood.
+  ///
+  /// In ar, this message translates to:
+  /// **'جيد'**
+  String get qualityBadgeGood;
+
+  /// No description provided for @qualityBadgeFair.
+  ///
+  /// In ar, this message translates to:
+  /// **'متوسط'**
+  String get qualityBadgeFair;
+
+  /// No description provided for @qualityBadgePoor.
+  ///
+  /// In ar, this message translates to:
+  /// **'ضعيف'**
+  String get qualityBadgePoor;
 }
 
 class _AppLocalizationsDelegate

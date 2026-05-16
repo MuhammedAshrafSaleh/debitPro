@@ -35,6 +35,7 @@ class EditInstallmentCubit extends Cubit<EditInstallmentState> {
           totalDebt: inst.totalDebt,
           durationMonths: inst.durationMonths,
           officeCommissionAmount: inst.officeCommissionAmount,
+          discountPerMonth: inst.discountPerMonth,
         ));
       },
     );
@@ -44,20 +45,23 @@ class EditInstallmentCubit extends Cubit<EditInstallmentState> {
     required double capital,
     required double profitAmount,
     required int durationMonths,
+    required double discountPerMonth,
   }) {
     if (durationMonths <= 0) return;
-    final totalDebt = capital + profitAmount;
-    final monthlyAmount = totalDebt / durationMonths;
+    final effectiveProfitAmount = profitAmount - discountPerMonth * durationMonths;
+    final effectiveTotalDebt = capital + effectiveProfitAmount;
+    final effectiveMonthlyAmount = effectiveTotalDebt / durationMonths;
     final officeCommissionAmount =
         (state.installment?.officeCommissionAmount ?? 0) > 0
             ? capital * AppConstants.kOfficeCommissionRate
             : 0.0;
 
     emit(state.copyWith(
-      monthlyAmount: monthlyAmount,
-      totalDebt: totalDebt,
+      monthlyAmount: effectiveMonthlyAmount,
+      totalDebt: effectiveTotalDebt,
       durationMonths: durationMonths,
       officeCommissionAmount: officeCommissionAmount,
+      discountPerMonth: discountPerMonth,
     ));
   }
 
@@ -67,6 +71,7 @@ class EditInstallmentCubit extends Cubit<EditInstallmentState> {
     required String itemName,
     required double capital,
     required double profitAmount,
+    required double discountPerMonth,
     required int durationMonths,
     required DateTime startDate,
   }) async {
@@ -79,6 +84,7 @@ class EditInstallmentCubit extends Cubit<EditInstallmentState> {
         itemName: itemName.trim(),
         capital: capital,
         profitAmount: profitAmount,
+        discountPerMonth: discountPerMonth,
         durationMonths: durationMonths,
         startDate: startDate,
       ),

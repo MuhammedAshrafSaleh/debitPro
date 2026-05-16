@@ -209,7 +209,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get installmentsProfit => 'My Profit';
 
   @override
+  String get installmentsDiscountPerMonth => 'Monthly Discount';
+
+  @override
+  String get installmentsDiscountTotal => 'Total Discount';
+
+  @override
   String get installmentsDuration => 'Duration (months)';
+
+  @override
+  String get installmentsCustomDuration => 'Or enter period manually';
 
   @override
   String get installmentsStartDate => 'Start Date';
@@ -679,6 +688,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Are you sure you want to delete this client? This action cannot be undone.';
 
   @override
+  String get clientsDeleteBlockedByPayments =>
+      'Cannot delete client because they have recorded payments';
+
+  @override
   String get clientsDeleteSuccess => 'Client deleted successfully';
 
   @override
@@ -877,4 +890,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get commonOfflineBanner => 'No internet connection';
+
+  @override
+  String get qualityBadgeExcellent => 'Excellent';
+
+  @override
+  String get qualityBadgeGood => 'Good';
+
+  @override
+  String get qualityBadgeFair => 'Fair';
+
+  @override
+  String get qualityBadgePoor => 'Poor';
 }

@@ -1,6 +1,7 @@
 // lib/core/presentation/widgets/quality_badge.dart
 
 import 'package:flutter/material.dart';
+import '../../../config/l10n/app_localizations.dart';
 
 import '../../utils/status_utils.dart';
 
@@ -12,11 +13,12 @@ class QualityBadgeWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context);
     final (label, bg, fg) = switch (badge) {
-      QualityBadge.excellent => ('ممتاز', cs.secondary.withAlpha(30), cs.secondary),
-      QualityBadge.good => ('جيد', cs.primary.withAlpha(30), cs.primary),
-      QualityBadge.fair => ('متوسط', cs.tertiary.withAlpha(30), cs.tertiary),
-      QualityBadge.poor => ('ضعيف', cs.error.withAlpha(30), cs.error),
+      QualityBadge.excellent => (l10n.qualityBadgeExcellent, cs.secondary.withAlpha(30), cs.secondary),
+      QualityBadge.good => (l10n.qualityBadgeGood, cs.primary.withAlpha(30), cs.primary),
+      QualityBadge.fair => (l10n.qualityBadgeFair, cs.tertiary.withAlpha(30), cs.tertiary),
+      QualityBadge.poor => (l10n.qualityBadgePoor, cs.error.withAlpha(30), cs.error),
     };
 
     return Container(

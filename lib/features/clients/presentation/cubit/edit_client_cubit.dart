@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../domain/entities/client_entity.dart';
 import '../../domain/repositories/client_repository.dart';
-import '../../domain/usecases/delete_client_use_case.dart';
+import '../../domain/usecases/delete_client_use_case.dart' show DeleteClientParams, DeleteClientUseCase;
 import '../../domain/usecases/edit_client_use_case.dart';
 import 'edit_client_state.dart';
 
@@ -43,9 +43,14 @@ class EditClientCubit extends Cubit<EditClientState> {
     );
   }
 
-  Future<void> delete(String id) async {
+  Future<void> delete({
+    required String id,
+    required int totalDuePaymentsCount,
+  }) async {
     emit(const EditClientSaving());
-    final result = await _deleteClient(id);
+    final result = await _deleteClient(
+      DeleteClientParams(id: id, totalDuePaymentsCount: totalDuePaymentsCount),
+    );
     if (isClosed) return;
     result.fold(
       (failure) => emit(EditClientFailure(failure.message)),

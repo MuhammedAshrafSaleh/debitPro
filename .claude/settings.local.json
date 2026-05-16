@@ -3,7 +3,8 @@
     "allow": [
       "Bash(flutter analyze *)",
       "Bash(flutter gen-l10n *)",
-      "Bash(flutter build *)"
+      "Bash(flutter build *)",
+      "Bash(dart analyze *)"
     ]
   }
 }

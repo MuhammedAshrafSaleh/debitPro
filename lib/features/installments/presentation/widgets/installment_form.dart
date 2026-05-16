@@ -14,6 +14,7 @@ class InstallmentFormData {
     required this.itemName,
     required this.capital,
     required this.profitAmount,
+    required this.discountPerMonth,
     required this.durationMonths,
     required this.startDate,
     required this.officeCommissionPaidAtCreation,
@@ -22,6 +23,7 @@ class InstallmentFormData {
   final String itemName;
   final double capital;
   final double profitAmount;
+  final double discountPerMonth;
   final int durationMonths;
   final DateTime startDate;
   final bool officeCommissionPaidAtCreation;
@@ -37,6 +39,7 @@ class InstallmentForm extends StatefulWidget {
     required this.totalDebt,
     required this.durationMonths,
     required this.officeCommissionAmount,
+    required this.discountPerMonth,
     required this.isLoading,
     required this.onSave,
     required this.onFormChanged,
@@ -44,6 +47,7 @@ class InstallmentForm extends StatefulWidget {
     this.initialItemName,
     this.initialCapital,
     this.initialProfitAmount,
+    this.initialDiscountPerMonth,
     this.initialDurationMonths,
     this.initialStartDate,
     this.initialOfficeCommissionPaid = false,
@@ -57,11 +61,13 @@ class InstallmentForm extends StatefulWidget {
   final double totalDebt;
   final int durationMonths;
   final double officeCommissionAmount;
+  final double discountPerMonth;
   final bool isLoading;
   final void Function(InstallmentFormData) onSave;
   final void Function({
     required double capital,
     required double profitAmount,
+    required double discountPerMonth,
     required int durationMonths,
   }) onFormChanged;
   final VoidCallback onCancel;
@@ -69,6 +75,7 @@ class InstallmentForm extends StatefulWidget {
   final String? initialItemName;
   final double? initialCapital;
   final double? initialProfitAmount;
+  final double? initialDiscountPerMonth;
   final int? initialDurationMonths;
   final DateTime? initialStartDate;
   final bool initialOfficeCommissionPaid;
@@ -82,6 +89,8 @@ class _InstallmentFormState extends State<InstallmentForm> {
   late final TextEditingController _itemNameCtrl;
   late final TextEditingController _capitalCtrl;
   late final TextEditingController _profitCtrl;
+  late final TextEditingController _discountCtrl;
+  late final TextEditingController _durationCtrl;
   late int _selectedDuration;
   late DateTime _startDate;
   late bool _officeCommissionPaid;
@@ -102,8 +111,17 @@ class _InstallmentFormState extends State<InstallmentForm> {
           ? widget.initialProfitAmount!.toStringAsFixed(0)
           : '',
     );
+    _discountCtrl = TextEditingController(
+      text: widget.initialDiscountPerMonth != null &&
+              widget.initialDiscountPerMonth! > 0
+          ? widget.initialDiscountPerMonth!.toStringAsFixed(2)
+          : '',
+    );
     _selectedDuration =
         widget.initialDurationMonths ?? AppConstants.kAllowedDurationMonths[3];
+    _durationCtrl = TextEditingController(
+      text: _selectedDuration > 0 ? _selectedDuration.toString() : '',
+    );
     _startDate = widget.initialStartDate ?? DateTime.now();
     _officeCommissionPaid = widget.initialOfficeCommissionPaid;
   }
@@ -113,15 +131,19 @@ class _InstallmentFormState extends State<InstallmentForm> {
     _itemNameCtrl.dispose();
     _capitalCtrl.dispose();
     _profitCtrl.dispose();
+    _discountCtrl.dispose();
+    _durationCtrl.dispose();
     super.dispose();
   }
 
   void _notifyFormChanged() {
     final capital = double.tryParse(_capitalCtrl.text) ?? 0;
     final profit = double.tryParse(_profitCtrl.text) ?? 0;
+    final discount = double.tryParse(_discountCtrl.text) ?? 0;
     widget.onFormChanged(
       capital: capital,
       profitAmount: profit,
+      discountPerMonth: discount,
       durationMonths: _selectedDuration,
     );
   }
@@ -141,10 +163,12 @@ class _InstallmentFormState extends State<InstallmentForm> {
   void _submit() {
     final capital = double.tryParse(_capitalCtrl.text) ?? 0;
     final profit = double.tryParse(_profitCtrl.text) ?? 0;
+    final discount = double.tryParse(_discountCtrl.text) ?? 0;
     widget.onSave(InstallmentFormData(
       itemName: _itemNameCtrl.text,
       capital: capital,
       profitAmount: profit,
+      discountPerMonth: discount,
       durationMonths: _selectedDuration,
       startDate: _startDate,
       officeCommissionPaidAtCreation: _officeCommissionPaid,
@@ -312,6 +336,24 @@ class _InstallmentFormState extends State<InstallmentForm> {
             enabled: !widget.isEditLocked,
             onChanged: (_) => _notifyFormChanged(),
           ),
+          const SizedBox(height: 12),
+
+          // Discount per month
+          TextFormField(
+            controller: _discountCtrl,
+            decoration: InputDecoration(
+              labelText: l10n.installmentsDiscountPerMonth,
+              prefixIcon: const Icon(Icons.discount_outlined),
+              suffixText: CurrencyUtils.currencyForLocale(locale),
+            ),
+            keyboardType:
+                const TextInputType.numberWithOptions(decimal: true),
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+            ],
+            enabled: !widget.isEditLocked,
+            onChanged: (_) => _notifyFormChanged(),
+          ),
           const SizedBox(height: 16),
 
           // Duration chips
@@ -334,11 +376,33 @@ class _InstallmentFormState extends State<InstallmentForm> {
                 onTap: widget.isEditLocked
                     ? null
                     : () {
-                        setState(() => _selectedDuration = months);
+                        setState(() {
+                          _selectedDuration = months;
+                          _durationCtrl.text = months.toString();
+                        });
                         _notifyFormChanged();
                       },
               );
             }).toList(),
+          ),
+          const SizedBox(height: 12),
+          TextFormField(
+            controller: _durationCtrl,
+            decoration: InputDecoration(
+              labelText: l10n.installmentsCustomDuration,
+              prefixIcon: const Icon(Icons.edit_calendar_outlined),
+              suffixText: l10n.installmentsMonths,
+            ),
+            keyboardType: TextInputType.number,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            enabled: !widget.isEditLocked,
+            onChanged: (value) {
+              final parsed = int.tryParse(value) ?? 0;
+              if (parsed > 0) {
+                setState(() => _selectedDuration = parsed);
+                _notifyFormChanged();
+              }
+            },
           ),
           const SizedBox(height: 16),
 
@@ -405,6 +469,14 @@ class _InstallmentFormState extends State<InstallmentForm> {
                       widget.monthlyAmount, locale),
                   highlight: true,
                 ),
+                if (widget.discountPerMonth > 0) ...[
+                  const SizedBox(height: 8),
+                  _SummaryRow(
+                    label: l10n.installmentsDiscountPerMonth,
+                    value: '- ${CurrencyUtils.formatCurrency(widget.discountPerMonth, locale)}',
+                    isDiscount: true,
+                  ),
+                ],
                 const SizedBox(height: 8),
                 _SummaryRow(
                   label: l10n.installmentsTotalDuration,
@@ -412,6 +484,14 @@ class _InstallmentFormState extends State<InstallmentForm> {
                       '${widget.durationMonths} ${l10n.installmentsMonths}',
                 ),
                 const Divider(height: 20),
+                if (widget.discountPerMonth > 0) ...[
+                  _SummaryRow(
+                    label: l10n.installmentsDiscountTotal,
+                    value: '- ${CurrencyUtils.formatCurrency(widget.discountPerMonth * widget.durationMonths, locale)}',
+                    isDiscount: true,
+                  ),
+                  const SizedBox(height: 8),
+                ],
                 _SummaryRow(
                   label: l10n.installmentsTotalDebt,
                   value: CurrencyUtils.formatCurrency(
@@ -503,11 +583,13 @@ class _SummaryRow extends StatelessWidget {
     required this.label,
     required this.value,
     this.highlight = false,
+    this.isDiscount = false,
   });
 
   final String label;
   final String value;
   final bool highlight;
+  final bool isDiscount;
 
   @override
   Widget build(BuildContext context) {
@@ -525,7 +607,9 @@ class _SummaryRow extends StatelessWidget {
                   color: cs.primary,
                   fontWeight: FontWeight.bold,
                 )
-              : tt.bodyMedium,
+              : isDiscount
+                  ? tt.bodyMedium?.copyWith(color: cs.error)
+                  : tt.bodyMedium,
         ),
       ],
     );

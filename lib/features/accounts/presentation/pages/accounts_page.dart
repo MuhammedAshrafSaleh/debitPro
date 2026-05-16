@@ -67,7 +67,7 @@ class _AccountsViewState extends State<_AccountsView> {
         title: Text(l10n.accountsTitle),
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.tune),
+          icon: const Icon(Icons.picture_as_pdf_outlined),
           tooltip: l10n.accountsFilters,
           onPressed: () => _showFilterSheet(context),
         ),

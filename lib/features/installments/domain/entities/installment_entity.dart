@@ -11,6 +11,7 @@ class InstallmentEntity extends Equatable {
     required this.itemName,
     required this.capital,
     required this.profitAmount,
+    required this.discountPerMonth,
     required this.profitPerPayment,
     required this.monthlyAmount,
     required this.totalDebt,
@@ -35,6 +36,7 @@ class InstallmentEntity extends Equatable {
   final String itemName;
   final double capital;
   final double profitAmount;
+  final double discountPerMonth;
   final double profitPerPayment;
   final double monthlyAmount;
   final double totalDebt;
@@ -60,6 +62,7 @@ class InstallmentEntity extends Equatable {
         itemName,
         capital,
         profitAmount,
+        discountPerMonth,
         profitPerPayment,
         monthlyAmount,
         totalDebt,

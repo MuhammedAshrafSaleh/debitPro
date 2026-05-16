@@ -169,7 +169,10 @@ class _ClientDetailScaffoldState extends State<_ClientDetailScaffold>
       cancelLabel: l10n.commonCancel,
     );
     if (confirmed && context.mounted) {
-      context.read<EditClientCubit>().delete(widget.clientId);
+      context.read<EditClientCubit>().delete(
+        id: widget.clientId,
+        totalDuePaymentsCount: widget.client.totalDuePaymentsCount,
+      );
     }
   }
 
@@ -390,6 +393,10 @@ class _ClientDetailScaffoldState extends State<_ClientDetailScaffold>
           ),
         ],
       ),
+      floatingActionButtonLocation:
+          Directionality.of(context) == TextDirection.rtl
+              ? FloatingActionButtonLocation.startFloat
+              : FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showAddRecordSheet(context),
         child: const Icon(Icons.add),

@@ -133,8 +133,14 @@
   "@installmentsCapital": {},
   "installmentsProfit": "نسبتي",
   "@installmentsProfit": {},
+  "installmentsDiscountPerMonth": "الخصم الشهري",
+  "@installmentsDiscountPerMonth": {},
+  "installmentsDiscountTotal": "إجمالي الخصم",
+  "@installmentsDiscountTotal": {},
   "installmentsDuration": "المدة (بالأشهر)",
   "@installmentsDuration": {},
+  "installmentsCustomDuration": "أو أدخل المدة يدوياً",
+  "@installmentsCustomDuration": {},
   "installmentsStartDate": "تاريخ البدء",
   "@installmentsStartDate": {},
   "installmentsSummary": "ملخص القسط",
@@ -449,6 +455,8 @@
   "@clientsDeleteConfirmTitle": {},
   "clientsDeleteConfirmMessage": "هل أنت متأكد من حذف هذا العميل؟ لا يمكن التراجع عن هذا الإجراء.",
   "@clientsDeleteConfirmMessage": {},
+  "clientsDeleteBlockedByPayments": "لا يمكن حذف العميل لأن لديه دفعات مسجلة",
+  "@clientsDeleteBlockedByPayments": {},
   "clientsDeleteSuccess": "تم حذف العميل بنجاح",
   "@clientsDeleteSuccess": {},
   "clientsAddSuccess": "تم إضافة العميل بنجاح",
@@ -588,5 +596,14 @@
   "@accountsPdfTypeGracePeriod": {},
 
   "commonOfflineBanner": "لا يوجد اتصال بالإنترنت",
-  "@commonOfflineBanner": {}
+  "@commonOfflineBanner": {},
+
+  "qualityBadgeExcellent": "ممتاز",
+  "@qualityBadgeExcellent": {},
+  "qualityBadgeGood": "جيد",
+  "@qualityBadgeGood": {},
+  "qualityBadgeFair": "متوسط",
+  "@qualityBadgeFair": {},
+  "qualityBadgePoor": "ضعيف",
+  "@qualityBadgePoor": {}
 }

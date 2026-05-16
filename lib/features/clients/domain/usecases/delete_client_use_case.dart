@@ -6,14 +6,29 @@ import '../../../../core/errors/exceptions.dart';
 import '../../../../core/errors/failures.dart';
 import '../../domain/repositories/client_repository.dart';
 
+class DeleteClientParams {
+  const DeleteClientParams({
+    required this.id,
+    required this.totalDuePaymentsCount,
+  });
+
+  final String id;
+  final int totalDuePaymentsCount;
+}
+
 class DeleteClientUseCase {
   DeleteClientUseCase(this._repository);
 
   final ClientRepository _repository;
 
-  Future<Either<Failure, void>> call(String id) async {
+  Future<Either<Failure, void>> call(DeleteClientParams params) async {
+    if (params.totalDuePaymentsCount > 0) {
+      return const Left(
+        ValidationFailure('لا يمكن حذف العميل لأن لديه دفعات مسجلة'),
+      );
+    }
     try {
-      return await _repository.deleteClient(id);
+      return await _repository.deleteClient(params.id);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
     } on NetworkException {

@@ -45,6 +45,7 @@ class AddInstallmentParams {
     required this.itemName,
     required this.capital,
     required this.profitAmount,
+    required this.discountPerMonth,
     required this.durationMonths,
     required this.startDate,
   });
@@ -55,6 +56,7 @@ class AddInstallmentParams {
   final String itemName;
   final double capital;
   final double profitAmount;
+  final double discountPerMonth;
   final int durationMonths;
   final DateTime startDate;
 }
@@ -66,6 +68,7 @@ class EditInstallmentParams {
     required this.itemName,
     required this.capital,
     required this.profitAmount,
+    required this.discountPerMonth,
     required this.durationMonths,
     required this.startDate,
   });
@@ -75,6 +78,7 @@ class EditInstallmentParams {
   final String itemName;
   final double capital;
   final double profitAmount;
+  final double discountPerMonth;
   final int durationMonths;
   final DateTime startDate;
 }

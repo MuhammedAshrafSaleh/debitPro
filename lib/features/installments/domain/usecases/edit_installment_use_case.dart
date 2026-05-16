@@ -2,7 +2,6 @@
 
 import 'package:dartz/dartz.dart';
 
-import '../../../../core/constants/app_constants.dart';
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/errors/failures.dart';
 import '../entities/installment_entity.dart';
@@ -25,10 +24,14 @@ class EditInstallmentUseCase {
     if (params.profitAmount < 0) {
       return Left(ValidationFailure('الربح لا يمكن أن يكون سالباً'));
     }
-    if (!AppConstants.kAllowedDurationMonths.contains(params.durationMonths)) {
-      return Left(
-        ValidationFailure('المدة يجب أن تكون: ${AppConstants.kAllowedDurationMonths.join(', ')} شهر'),
-      );
+    if (params.discountPerMonth < 0) {
+      return Left(ValidationFailure('الخصم الشهري لا يمكن أن يكون سالباً'));
+    }
+    if (params.durationMonths <= 0) {
+      return Left(ValidationFailure('المدة يجب أن تكون أكبر من صفر'));
+    }
+    if (params.discountPerMonth * params.durationMonths > params.profitAmount) {
+      return Left(ValidationFailure('إجمالي الخصم يتجاوز إجمالي الربح'));
     }
     try {
       return await _repository.editInstallment(params);

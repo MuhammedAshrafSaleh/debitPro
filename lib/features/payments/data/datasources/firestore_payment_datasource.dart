@@ -96,7 +96,8 @@ class PaymentRemoteDataSourceImpl implements PaymentRemoteDataSource {
             ((instData['totalPaymentsCount'] as num?) ?? 0).toInt();
         final newPaidCount = paidCount + 1;
         final isCompleted = newPaidCount >= totalCount;
-        final isOnTime = today.day <= AppConstants.kPaymentDueDay;
+        final dueDay = DateTime(payment.dueDate.year, payment.dueDate.month, AppConstants.kPaymentDueDay);
+        final isOnTime = !today.isAfter(dueDay);
 
         final onTime = ((clientData['onTimePaymentsCount'] as num?) ?? 0).toInt() +
             (isOnTime ? 1 : 0);
@@ -398,8 +399,9 @@ class PaymentRemoteDataSourceImpl implements PaymentRemoteDataSource {
       // transaction's paidDate snapshot (not the payment doc).
       final originalPaid =
           (txData['paidDate'] as Timestamp?)?.toDate() ?? today;
-      final wasOnTime =
-          originalPaid.day <= AppConstants.kPaymentDueDay;
+      final dueDate = (payData['dueDate'] as Timestamp).toDate();
+      final dueDay = DateTime(dueDate.year, dueDate.month, AppConstants.kPaymentDueDay);
+      final wasOnTime = !DateTime(originalPaid.year, originalPaid.month, originalPaid.day).isAfter(dueDay);
 
       final onTime =
           ((clientData['onTimePaymentsCount'] as num?) ?? 0).toInt() -
@@ -412,8 +414,6 @@ class PaymentRemoteDataSourceImpl implements PaymentRemoteDataSource {
       );
 
       // Recompute payment status from the schedule
-      final dueDate =
-          (payData['dueDate'] as Timestamp).toDate();
       final newStatus = StatusUtils.computeInstallmentPaymentStatus(
         dueDate,
         today,

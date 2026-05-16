@@ -101,24 +101,28 @@ class _EditInstallmentView extends StatelessWidget {
                   totalDebt: state.totalDebt,
                   durationMonths: state.durationMonths,
                   officeCommissionAmount: state.officeCommissionAmount,
+                  discountPerMonth: state.discountPerMonth,
                   isLoading: state.isSaving,
                   isEditLocked: isLocked,
                   initialItemName: installment.itemName,
                   initialCapital: installment.capital,
-                  initialProfitAmount: installment.profitAmount,
+                  initialProfitAmount: installment.profitAmount +
+                      installment.discountPerMonth * installment.durationMonths,
+                  initialDiscountPerMonth: installment.discountPerMonth,
                   initialDurationMonths: installment.durationMonths,
                   initialStartDate: installment.startDate,
-                  initialOfficeCommissionPaid:
-                      installment.officeCommissionPaid,
+                  initialOfficeCommissionPaid: installment.officeCommissionPaid,
                   onFormChanged: ({
                     required capital,
                     required profitAmount,
+                    required discountPerMonth,
                     required durationMonths,
                   }) {
                     context.read<EditInstallmentCubit>().updateSummary(
                           capital: capital,
                           profitAmount: profitAmount,
                           durationMonths: durationMonths,
+                          discountPerMonth: discountPerMonth,
                         );
                   },
                   onSave: (data) {
@@ -128,6 +132,7 @@ class _EditInstallmentView extends StatelessWidget {
                           itemName: data.itemName,
                           capital: data.capital,
                           profitAmount: data.profitAmount,
+                          discountPerMonth: data.discountPerMonth,
                           durationMonths: data.durationMonths,
                           startDate: data.startDate,
                         );

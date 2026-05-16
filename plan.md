@@ -388,3 +388,13 @@ These are the bottlenecks of the system — anything that does math, status, or 
 - All denormalized counters (`totalPaid`, `totalRemaining`, `paidPaymentsCount`, etc.) are written exclusively inside `runTransaction` — never from a plain `set()` / `update()`. The repo layer is the only place these counters are mutated.
 - The `payments` collection is **flat per user** (not nested under installments). Range queries by `dueMonth` depend on this.
 - Firestore composite indexes (Phase 13.2) MUST be deployed before Phase 11 accounts filters work in production — the emulator/dev path can tolerate missing indexes with a console warning.
+
+
+
+انا عملت البلان دي وحصلى كذا مشكلة فى الكود مش عايز أوجهها تانى 
+فقهولك على الحجات الى قابلتنى ولاقيت فيها مشكلة او محتاج أضيفها ومش عارف هل أضيفها فى Claude.md or Plan.md 
+لازم الابليكيشن كله يكون متبع نهج ال responsiveness 
+اي حاجة محتاجة waiting او بنتظر فيها لازم يكون فيها snakebar بالحالة الجديدة 
+لازم يكون فيه performance rules 
+قابتلنى مشاكل فى التطبيق مش باللغة العربية لازم أقوله اعمل كذا أو غير كذا ومحتاجه يعمل Check هل ال feature فى ال UI متنساق مع ال RTL ولا لاء 
+

@@ -40,7 +40,7 @@ class DebtProApp extends StatefulWidget {
   @override
   State<DebtProApp> createState() => _DebtProAppState();
 }
-
+  
 class _DebtProAppState extends State<DebtProApp> {
   StreamSubscription<User?>? _authSub;
   String? _lastRefreshedUid;
@@ -50,8 +50,9 @@ class _DebtProAppState extends State<DebtProApp> {
   @override
   void initState() {
     super.initState();
-    _authSub =
-        FirebaseAuth.instance.authStateChanges().listen(_onAuthStateChanged);
+    _authSub = FirebaseAuth.instance.authStateChanges().listen(
+      _onAuthStateChanged,
+    );
   }
 
   @override

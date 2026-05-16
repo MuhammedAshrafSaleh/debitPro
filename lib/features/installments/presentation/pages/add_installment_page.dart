@@ -82,32 +82,36 @@ class _AddInstallmentView extends StatelessWidget {
                   totalDebt: formState.totalDebt,
                   durationMonths: formState.durationMonths,
                   officeCommissionAmount: formState.officeCommissionAmount,
+                  discountPerMonth: formState.discountPerMonth,
                   isLoading: formState.isSaving,
-                  onFormChanged: ({
-                    required capital,
-                    required profitAmount,
-                    required durationMonths,
-                  }) {
-                    context.read<AddInstallmentCubit>().updateSummary(
+                  onFormChanged:
+                      ({
+                        required capital,
+                        required profitAmount,
+                        required discountPerMonth,
+                        required durationMonths,
+                      }) {
+                        context.read<AddInstallmentCubit>().updateSummary(
                           capital: capital,
                           profitAmount: profitAmount,
                           durationMonths: durationMonths,
-                          isOfficeClient:
-                              client.clientType.name == 'office',
+                          isOfficeClient: client.clientType.name == 'office',
+                          discountPerMonth: discountPerMonth,
                         );
-                  },
+                      },
                   onSave: (data) {
                     context.read<AddInstallmentCubit>().save(
-                          clientId: clientId,
-                          clientType: client.clientType,
-                          officeCommissionPaidAtCreation:
-                              data.officeCommissionPaidAtCreation,
-                          itemName: data.itemName,
-                          capital: data.capital,
-                          profitAmount: data.profitAmount,
-                          durationMonths: data.durationMonths,
-                          startDate: data.startDate,
-                        );
+                      clientId: clientId,
+                      clientType: client.clientType,
+                      officeCommissionPaidAtCreation:
+                          data.officeCommissionPaidAtCreation,
+                      itemName: data.itemName,
+                      capital: data.capital,
+                      profitAmount: data.profitAmount,
+                      discountPerMonth: data.discountPerMonth,
+                      durationMonths: data.durationMonths,
+                      startDate: data.startDate,
+                    );
                   },
                   onCancel: () => context.pop(),
                 );

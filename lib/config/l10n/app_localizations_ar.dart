@@ -206,7 +206,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get installmentsProfit => 'نسبتي';
 
   @override
+  String get installmentsDiscountPerMonth => 'الخصم الشهري';
+
+  @override
+  String get installmentsDiscountTotal => 'إجمالي الخصم';
+
+  @override
   String get installmentsDuration => 'المدة (بالأشهر)';
+
+  @override
+  String get installmentsCustomDuration => 'أو أدخل المدة يدوياً';
 
   @override
   String get installmentsStartDate => 'تاريخ البدء';
@@ -672,6 +681,10 @@ class AppLocalizationsAr extends AppLocalizations {
       'هل أنت متأكد من حذف هذا العميل؟ لا يمكن التراجع عن هذا الإجراء.';
 
   @override
+  String get clientsDeleteBlockedByPayments =>
+      'لا يمكن حذف العميل لأن لديه دفعات مسجلة';
+
+  @override
   String get clientsDeleteSuccess => 'تم حذف العميل بنجاح';
 
   @override
@@ -870,4 +883,16 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get commonOfflineBanner => 'لا يوجد اتصال بالإنترنت';
+
+  @override
+  String get qualityBadgeExcellent => 'ممتاز';
+
+  @override
+  String get qualityBadgeGood => 'جيد';
+
+  @override
+  String get qualityBadgeFair => 'متوسط';
+
+  @override
+  String get qualityBadgePoor => 'ضعيف';
 }

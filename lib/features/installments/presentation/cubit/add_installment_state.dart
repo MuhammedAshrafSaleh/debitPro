@@ -13,6 +13,7 @@ class AddInstallmentState extends Equatable {
     this.totalDebt = 0,
     this.durationMonths = 12,
     this.officeCommissionAmount = 0,
+    this.discountPerMonth = 0,
     this.savedInstallment,
     this.errorMessage,
   });
@@ -22,6 +23,7 @@ class AddInstallmentState extends Equatable {
   final double totalDebt;
   final int durationMonths;
   final double officeCommissionAmount;
+  final double discountPerMonth;
   final InstallmentEntity? savedInstallment;
   final String? errorMessage;
 
@@ -34,6 +36,7 @@ class AddInstallmentState extends Equatable {
     double? totalDebt,
     int? durationMonths,
     double? officeCommissionAmount,
+    double? discountPerMonth,
     InstallmentEntity? savedInstallment,
     String? errorMessage,
   }) =>
@@ -44,6 +47,7 @@ class AddInstallmentState extends Equatable {
         durationMonths: durationMonths ?? this.durationMonths,
         officeCommissionAmount:
             officeCommissionAmount ?? this.officeCommissionAmount,
+        discountPerMonth: discountPerMonth ?? this.discountPerMonth,
         savedInstallment: savedInstallment ?? this.savedInstallment,
         errorMessage: errorMessage ?? this.errorMessage,
       );
@@ -55,6 +59,7 @@ class AddInstallmentState extends Equatable {
         totalDebt,
         durationMonths,
         officeCommissionAmount,
+        discountPerMonth,
         savedInstallment,
         errorMessage,
       ];

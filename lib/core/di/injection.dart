@@ -25,10 +25,13 @@ import '../../features/settings/domain/repositories/settings_repository.dart';
 import '../../features/settings/domain/usecases/change_language_use_case.dart';
 import '../../features/settings/domain/usecases/load_preferences_use_case.dart';
 import '../../features/settings/domain/usecases/toggle_theme_use_case.dart';
+import '../../features/settings/domain/usecases/get_owner_config_use_case.dart';
 import '../../features/settings/domain/usecases/update_display_name_use_case.dart';
 import '../../features/settings/domain/usecases/update_email_use_case.dart';
+import '../../features/settings/domain/usecases/update_owner_config_use_case.dart';
 import '../../features/settings/domain/usecases/update_password_use_case.dart';
 import '../../features/settings/presentation/cubit/edit_account_cubit.dart';
+import '../../features/settings/presentation/cubit/owner_config_cubit.dart';
 import '../../features/settings/presentation/cubit/settings_cubit.dart';
 import '../../features/auth/data/datasources/firebase_auth_datasource.dart';
 import '../../features/auth/data/repositories/auth_repository_impl.dart';
@@ -135,6 +138,8 @@ void initSettings() {
   sl.registerFactory(() => UpdateDisplayNameUseCase(sl()));
   sl.registerFactory(() => UpdateEmailUseCase(sl()));
   sl.registerFactory(() => UpdatePasswordUseCase(sl()));
+  sl.registerFactory(() => GetOwnerConfigUseCase(sl()));
+  sl.registerFactory(() => UpdateOwnerConfigUseCase(sl()));
 
   // Cubits
   sl.registerFactory<SettingsCubit>(
@@ -142,6 +147,9 @@ void initSettings() {
   );
   sl.registerFactory<EditAccountCubit>(
     () => EditAccountCubit(sl(), sl(), sl()),
+  );
+  sl.registerFactory<OwnerConfigCubit>(
+    () => OwnerConfigCubit(sl(), sl()),
   );
 }
 

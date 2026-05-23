@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../config/l10n/app_localizations.dart';
+import '../../../../core/constants/app_constants.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/presentation/widgets/app_snackbar.dart';
 import '../../../../core/presentation/widgets/avatar_widget.dart';
@@ -14,6 +15,7 @@ import '../../../../core/usecases/usecase.dart';
 import '../../../../features/auth/domain/usecases/sign_out_use_case.dart';
 import '../cubit/settings_cubit.dart';
 import '../cubit/settings_state.dart';
+import '../widgets/owner_config_row.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -207,6 +209,10 @@ class _PreferencesCard extends StatelessWidget {
                   ),
                 ),
               ),
+              if (AppConstants.kShowOwnerSettings) ...[
+                const Divider(),
+                const OwnerConfigRowProvider(),
+              ],
             ],
           ),
         );

@@ -3,6 +3,7 @@
 import 'package:dartz/dartz.dart';
 
 import '../../../../core/errors/failures.dart';
+import '../entities/owner_config_entity.dart';
 
 abstract class SettingsRepository {
   Future<Either<Failure, Map<String, dynamic>>> loadPreferences(String uid);
@@ -22,5 +23,11 @@ abstract class SettingsRepository {
   Future<Either<Failure, void>> updatePassword({
     required String currentPassword,
     required String newPassword,
+  });
+  Future<Either<Failure, OwnerConfigEntity>> getOwnerConfig(String uid);
+  Future<Either<Failure, void>> updateOwnerConfig({
+    required String uid,
+    required double cardFee,
+    required double riyalValue,
   });
 }

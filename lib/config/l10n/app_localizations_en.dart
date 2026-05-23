@@ -562,6 +562,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsPasswordUpdated => 'Password updated successfully';
 
   @override
+  String get settingsOwnerConfig => 'Owner Config';
+
+  @override
+  String get settingsCardFee => 'Cards';
+
+  @override
+  String get settingsRiyalValue => 'Riyal';
+
+  @override
+  String get settingsOwnerConfigSaved => 'Saved';
+
+  @override
   String get commonSave => 'Save';
 
   @override

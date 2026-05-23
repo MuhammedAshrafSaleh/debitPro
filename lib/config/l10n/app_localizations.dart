@@ -1148,6 +1148,30 @@ abstract class AppLocalizations {
   /// **'تم تحديث كلمة المرور بنجاح'**
   String get settingsPasswordUpdated;
 
+  /// No description provided for @settingsOwnerConfig.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعدادات المالك'**
+  String get settingsOwnerConfig;
+
+  /// No description provided for @settingsCardFee.
+  ///
+  /// In ar, this message translates to:
+  /// **'البطاقات'**
+  String get settingsCardFee;
+
+  /// No description provided for @settingsRiyalValue.
+  ///
+  /// In ar, this message translates to:
+  /// **'ريال'**
+  String get settingsRiyalValue;
+
+  /// No description provided for @settingsOwnerConfigSaved.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم الحفظ'**
+  String get settingsOwnerConfigSaved;
+
   /// No description provided for @commonSave.
   ///
   /// In ar, this message translates to:

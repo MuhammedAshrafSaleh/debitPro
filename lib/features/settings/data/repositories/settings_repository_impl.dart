@@ -6,6 +6,7 @@ import 'package:logger/logger.dart';
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/network/network_info.dart';
+import '../../domain/entities/owner_config_entity.dart';
 import '../../domain/repositories/settings_repository.dart';
 import '../datasources/firebase_user_datasource.dart';
 
@@ -117,6 +118,39 @@ class SettingsRepositoryImpl implements SettingsRepository {
     } on AuthException catch (e) {
       _log.e('updatePassword', error: e);
       return Left(AuthFailure(_mapAuthCode(e.code)));
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, OwnerConfigEntity>> getOwnerConfig(String uid) async {
+    try {
+      final data = await _dataSource.getOwnerConfig(uid);
+      return Right(OwnerConfigEntity(
+        cardFee: data['cardFee'] as double,
+        riyalValue: data['riyalValue'] as double,
+      ));
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> updateOwnerConfig({
+    required String uid,
+    required double cardFee,
+    required double riyalValue,
+  }) async {
+    final offline = await _checkNetwork<void>();
+    if (offline != null) return offline;
+    try {
+      await _dataSource.updateOwnerConfig(
+        uid: uid,
+        cardFee: cardFee,
+        riyalValue: riyalValue,
+      );
+      return const Right(null);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
     }

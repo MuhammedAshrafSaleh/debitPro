@@ -555,6 +555,18 @@ class AppLocalizationsAr extends AppLocalizations {
   String get settingsPasswordUpdated => 'تم تحديث كلمة المرور بنجاح';
 
   @override
+  String get settingsOwnerConfig => 'إعدادات المالك';
+
+  @override
+  String get settingsCardFee => 'البطاقات';
+
+  @override
+  String get settingsRiyalValue => 'ريال';
+
+  @override
+  String get settingsOwnerConfigSaved => 'تم الحفظ';
+
+  @override
   String get commonSave => 'حفظ';
 
   @override

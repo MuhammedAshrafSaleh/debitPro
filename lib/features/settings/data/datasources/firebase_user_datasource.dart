@@ -20,6 +20,12 @@ abstract class SettingsRemoteDataSource {
     required String currentPassword,
     required String newPassword,
   });
+  Future<Map<String, dynamic>> getOwnerConfig(String uid);
+  Future<void> updateOwnerConfig({
+    required String uid,
+    required double cardFee,
+    required double riyalValue,
+  });
 }
 
 class SettingsRemoteDataSourceImpl implements SettingsRemoteDataSource {
@@ -126,6 +132,38 @@ class SettingsRemoteDataSourceImpl implements SettingsRemoteDataSource {
     } on FirebaseAuthException catch (e) {
       _log.e('updatePassword', error: e);
       throw AuthException(e.code, e.message ?? '');
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>> getOwnerConfig(String uid) async {
+    try {
+      final doc = await _firestore.doc(FirestorePaths.users(uid)).get();
+      final data = doc.data();
+      return {
+        'cardFee': (data?['cardFee'] as num?)?.toDouble() ?? 0.0,
+        'riyalValue': (data?['riyalValue'] as num?)?.toDouble() ?? 0.0,
+      };
+    } catch (e) {
+      _log.e('getOwnerConfig', error: e);
+      throw const ServerException();
+    }
+  }
+
+  @override
+  Future<void> updateOwnerConfig({
+    required String uid,
+    required double cardFee,
+    required double riyalValue,
+  }) async {
+    try {
+      await _firestore.doc(FirestorePaths.users(uid)).set(
+        {'cardFee': cardFee, 'riyalValue': riyalValue},
+        SetOptions(merge: true),
+      );
+    } catch (e) {
+      _log.e('updateOwnerConfig', error: e);
+      throw const ServerException();
     }
   }
 }

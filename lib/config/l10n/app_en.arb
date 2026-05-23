@@ -189,6 +189,10 @@
   "settingsDisplayNameUpdated": "Display name updated successfully",
   "settingsEmailVerificationSent": "A confirmation link was sent to the new email",
   "settingsPasswordUpdated": "Password updated successfully",
+  "settingsOwnerConfig": "Owner Config",
+  "settingsCardFee": "Cards",
+  "settingsRiyalValue": "Riyal",
+  "settingsOwnerConfigSaved": "Saved",
 
   "commonSave": "Save",
   "commonCancel": "Cancel",

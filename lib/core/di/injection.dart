@@ -61,6 +61,7 @@ import '../../features/grace_periods/data/datasources/firestore_grace_period_dat
 import '../../features/grace_periods/data/repositories/grace_period_repository_impl.dart';
 import '../../features/grace_periods/domain/repositories/grace_period_repository.dart';
 import '../../features/grace_periods/domain/usecases/add_grace_period_use_case.dart';
+import '../../features/grace_periods/domain/usecases/delete_grace_period_use_case.dart';
 import '../../features/grace_periods/domain/usecases/edit_grace_period_use_case.dart';
 import '../../features/grace_periods/domain/usecases/get_grace_period_use_case.dart';
 import '../../features/grace_periods/domain/usecases/pay_grace_period_office_commission_use_case.dart';
@@ -237,6 +238,7 @@ void initGracePeriods() {
 
   // Use cases
   sl.registerFactory(() => AddGracePeriodUseCase(sl()));
+  sl.registerFactory(() => DeleteGracePeriodUseCase(sl()));
   sl.registerFactory(() => EditGracePeriodUseCase(sl()));
   sl.registerFactory(() => GetGracePeriodUseCase(sl()));
   sl.registerFactory(() => PayGracePeriodOfficeCommissionUseCase(sl()));
@@ -244,7 +246,7 @@ void initGracePeriods() {
 
   // Cubits
   sl.registerFactory(() => AddGracePeriodCubit(sl()));
-  sl.registerFactory(() => EditGracePeriodCubit(sl(), sl()));
+  sl.registerFactory(() => EditGracePeriodCubit(sl(), sl(), sl()));
   sl.registerFactory(() => ClientGracePeriodsCubit(sl(), sl()));
 }
 

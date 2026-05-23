@@ -23,6 +23,8 @@ abstract class GracePeriodRemoteDataSource {
   Future<GracePeriodModel> editGracePeriod(EditGracePeriodParams params);
 
   Future<void> payOfficeCommission(String gracePeriodId);
+
+  Future<void> deleteGracePeriod(String gracePeriodId);
 }
 
 class GracePeriodRemoteDataSourceImpl implements GracePeriodRemoteDataSource {
@@ -274,6 +276,45 @@ class GracePeriodRemoteDataSourceImpl implements GracePeriodRemoteDataSource {
       });
     } catch (e) {
       _log.e('payOfficeCommission', error: e);
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<void> deleteGracePeriod(String gracePeriodId) async {
+    try {
+      final gpDoc = await _gracePeriodsRef.doc(gracePeriodId).get();
+      if (!gpDoc.exists) throw ServerException('المهلة غير موجودة');
+      final gp = GracePeriodModel.fromFirestore(gpDoc);
+
+      if (gp.status == GracePeriodStatus.paid) {
+        throw ServerException('لا يمكن حذف مهلة تم سدادها');
+      }
+
+      final batch = _firestore.batch();
+
+      batch.delete(_gracePeriodsRef.doc(gracePeriodId));
+      batch.set(
+        _clientRef(gp.clientId),
+        {
+          'totalRemaining': FieldValue.increment(-gp.capital),
+          'activeDebtsCount': FieldValue.increment(-1),
+          'updatedAt': FieldValue.serverTimestamp(),
+        },
+        SetOptions(merge: true),
+      );
+      batch.set(
+        _allTimeRef,
+        {
+          'totalCapital': FieldValue.increment(-gp.capital),
+          'updatedAt': FieldValue.serverTimestamp(),
+        },
+        SetOptions(merge: true),
+      );
+
+      await batch.commit();
+    } catch (e) {
+      _log.e('deleteGracePeriod', error: e);
       throw ServerException(e.toString());
     }
   }

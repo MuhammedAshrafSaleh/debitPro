@@ -264,6 +264,12 @@
   "@gracePeriodPaySuccess": {},
   "gracePeriodGraceUntil": "مهلة حتى",
   "@gracePeriodGraceUntil": {},
+  "gracePeriodDeleteConfirmTitle": "حذف المهلة",
+  "@gracePeriodDeleteConfirmTitle": {},
+  "gracePeriodDeleteConfirmMessage": "هل أنت متأكد من حذف هذه المهلة؟ لا يمكن التراجع عن هذا الإجراء.",
+  "@gracePeriodDeleteConfirmMessage": {},
+  "gracePeriodDeleteSuccess": "تم حذف المهلة بنجاح",
+  "@gracePeriodDeleteSuccess": {},
 
   "paymentsTitle": "المدفوعات",
   "@paymentsTitle": {},

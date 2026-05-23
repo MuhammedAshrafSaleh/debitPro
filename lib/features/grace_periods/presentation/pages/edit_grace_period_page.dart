@@ -38,6 +38,38 @@ class _EditGracePeriodView extends StatelessWidget {
 
   final String gracePeriodId;
 
+  Future<void> _showDeleteDialog(
+    BuildContext context,
+    AppLocalizations l10n,
+    String id,
+  ) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.gracePeriodDeleteConfirmTitle),
+        content: Text(l10n.gracePeriodDeleteConfirmMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(l10n.commonCancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: Text(
+              l10n.gracePeriodDeleteConfirmTitle,
+              style: TextStyle(
+                color: Theme.of(ctx).colorScheme.error,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true && context.mounted) {
+      context.read<EditGracePeriodCubit>().delete(id);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -49,6 +81,9 @@ class _EditGracePeriodView extends StatelessWidget {
           AppSnackbar.error(context, state.errorMessage!);
         } else if (state.status == EditGracePeriodStatus.saved) {
           AppSnackbar.success(context, l10n.gracePeriodEditSuccess);
+          if (context.mounted) context.pop();
+        } else if (state.status == EditGracePeriodStatus.deleted) {
+          AppSnackbar.success(context, l10n.gracePeriodDeleteSuccess);
           if (context.mounted) context.pop();
         }
       },
@@ -72,11 +107,31 @@ class _EditGracePeriodView extends StatelessWidget {
 
         final gp = state.gracePeriod!;
 
+        final isPaid = gp.status == GracePeriodStatus.paid;
+
         return BlocProvider(
           create: (_) =>
               sl<ClientDetailCubit>()..loadClient(gp.clientId),
           child: Scaffold(
-            appBar: AppBar(title: Text(l10n.gracePeriodEditTitle)),
+            appBar: AppBar(
+              title: Text(l10n.gracePeriodEditTitle),
+              actions: [
+                if (!isPaid)
+                  IconButton(
+                    icon: state.isDeleting
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Icon(Icons.delete_outline),
+                    tooltip: l10n.gracePeriodDeleteConfirmTitle,
+                    onPressed: state.isDeleting
+                        ? null
+                        : () => _showDeleteDialog(context, l10n, gracePeriodId),
+                  ),
+              ],
+            ),
             body: BlocBuilder<ClientDetailCubit, ClientDetailState>(
               builder: (context, clientState) {
                 if (clientState is ClientDetailLoading ||

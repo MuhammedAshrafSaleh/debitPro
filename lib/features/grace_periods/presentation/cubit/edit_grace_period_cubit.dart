@@ -3,6 +3,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../domain/repositories/grace_period_repository.dart';
+import '../../domain/usecases/delete_grace_period_use_case.dart';
 import '../../domain/usecases/edit_grace_period_use_case.dart';
 import '../../domain/usecases/get_grace_period_use_case.dart';
 import 'edit_grace_period_state.dart';
@@ -11,10 +12,12 @@ class EditGracePeriodCubit extends Cubit<EditGracePeriodState> {
   EditGracePeriodCubit(
     this._getGracePeriod,
     this._editGracePeriod,
+    this._deleteGracePeriod,
   ) : super(const EditGracePeriodState());
 
   final GetGracePeriodUseCase _getGracePeriod;
   final EditGracePeriodUseCase _editGracePeriod;
+  final DeleteGracePeriodUseCase _deleteGracePeriod;
 
   Future<void> load(String gracePeriodId) async {
     emit(state.copyWith(status: EditGracePeriodStatus.loading));
@@ -64,6 +67,19 @@ class EditGracePeriodCubit extends Cubit<EditGracePeriodState> {
         status: EditGracePeriodStatus.saved,
         savedGracePeriod: gracePeriod,
       )),
+    );
+  }
+
+  Future<void> delete(String gracePeriodId) async {
+    emit(state.copyWith(status: EditGracePeriodStatus.deleting));
+    final result = await _deleteGracePeriod(gracePeriodId);
+    if (isClosed) return;
+    result.fold(
+      (failure) => emit(state.copyWith(
+        status: EditGracePeriodStatus.failure,
+        errorMessage: failure.message,
+      )),
+      (_) => emit(state.copyWith(status: EditGracePeriodStatus.deleted)),
     );
   }
 }

@@ -866,6 +866,24 @@ abstract class AppLocalizations {
   /// **'مهلة حتى'**
   String get gracePeriodGraceUntil;
 
+  /// No description provided for @gracePeriodDeleteConfirmTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'حذف المهلة'**
+  String get gracePeriodDeleteConfirmTitle;
+
+  /// No description provided for @gracePeriodDeleteConfirmMessage.
+  ///
+  /// In ar, this message translates to:
+  /// **'هل أنت متأكد من حذف هذه المهلة؟ لا يمكن التراجع عن هذا الإجراء.'**
+  String get gracePeriodDeleteConfirmMessage;
+
+  /// No description provided for @gracePeriodDeleteSuccess.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم حذف المهلة بنجاح'**
+  String get gracePeriodDeleteSuccess;
+
   /// No description provided for @paymentsTitle.
   ///
   /// In ar, this message translates to:

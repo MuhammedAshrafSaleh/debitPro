@@ -4,7 +4,7 @@ import 'package:equatable/equatable.dart';
 
 import '../../domain/entities/grace_period_entity.dart';
 
-enum EditGracePeriodStatus { initial, loading, loaded, saving, saved, failure }
+enum EditGracePeriodStatus { initial, loading, loaded, saving, saved, deleting, deleted, failure }
 
 class EditGracePeriodState extends Equatable {
   const EditGracePeriodState({
@@ -24,6 +24,8 @@ class EditGracePeriodState extends Equatable {
   bool get isLoading => status == EditGracePeriodStatus.loading;
   bool get isSaving => status == EditGracePeriodStatus.saving;
   bool get isSaved => status == EditGracePeriodStatus.saved;
+  bool get isDeleting => status == EditGracePeriodStatus.deleting;
+  bool get isDeleted => status == EditGracePeriodStatus.deleted;
 
   EditGracePeriodState copyWith({
     EditGracePeriodStatus? status,

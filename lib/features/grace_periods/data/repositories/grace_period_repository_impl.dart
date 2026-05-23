@@ -108,4 +108,19 @@ class GracePeriodRepositoryImpl implements GracePeriodRepository {
     }
   }
 
+  @override
+  Future<Either<Failure, void>> deleteGracePeriod(String gracePeriodId) async {
+    final offline = await _checkNetwork<void>();
+    if (offline != null) return offline;
+    try {
+      await _dataSource.deleteGracePeriod(gracePeriodId);
+      return const Right(null);
+    } on ServerException catch (e) {
+      _log.e('deleteGracePeriod', error: e);
+      return Left(ServerFailure(e.message));
+    } on NetworkException {
+      return Left(NetworkFailure('لا يوجد اتصال بالإنترنت'));
+    }
+  }
+
 }

@@ -20,6 +20,8 @@ abstract class GracePeriodRepository {
   );
 
   Future<Either<Failure, void>> payOfficeCommission(String gracePeriodId);
+
+  Future<Either<Failure, void>> deleteGracePeriod(String gracePeriodId);
 }
 
 class AddGracePeriodParams {

@@ -407,6 +407,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get gracePeriodGraceUntil => 'مهلة حتى';
 
   @override
+  String get gracePeriodDeleteConfirmTitle => 'حذف المهلة';
+
+  @override
+  String get gracePeriodDeleteConfirmMessage =>
+      'هل أنت متأكد من حذف هذه المهلة؟ لا يمكن التراجع عن هذا الإجراء.';
+
+  @override
+  String get gracePeriodDeleteSuccess => 'تم حذف المهلة بنجاح';
+
+  @override
   String get paymentsTitle => 'المدفوعات';
 
   @override

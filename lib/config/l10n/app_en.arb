@@ -132,6 +132,9 @@
   "gracePeriodPayConfirmMessage": "Do you want to record full payment for this grace period?",
   "gracePeriodPaySuccess": "Grace period payment recorded successfully",
   "gracePeriodGraceUntil": "Grace period until",
+  "gracePeriodDeleteConfirmTitle": "Delete Grace Period",
+  "gracePeriodDeleteConfirmMessage": "Are you sure you want to delete this grace period? This action cannot be undone.",
+  "gracePeriodDeleteSuccess": "Grace period deleted successfully",
 
   "paymentsTitle": "Payments",
 

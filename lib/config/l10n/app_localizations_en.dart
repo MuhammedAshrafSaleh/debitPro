@@ -414,6 +414,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get gracePeriodGraceUntil => 'Grace period until';
 
   @override
+  String get gracePeriodDeleteConfirmTitle => 'Delete Grace Period';
+
+  @override
+  String get gracePeriodDeleteConfirmMessage =>
+      'Are you sure you want to delete this grace period? This action cannot be undone.';
+
+  @override
+  String get gracePeriodDeleteSuccess => 'Grace period deleted successfully';
+
+  @override
   String get paymentsTitle => 'Payments';
 
   @override

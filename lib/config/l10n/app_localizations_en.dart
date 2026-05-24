@@ -106,6 +106,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authEmailSentNotReceived => 'I didn\'t receive the email';
 
   @override
+  String get authEmailSentSpamHint =>
+      'Can\'t find it? Check your spam or junk folder';
+
+  @override
   String get authVerifyEmailTitle => 'Verify Your Email';
 
   @override

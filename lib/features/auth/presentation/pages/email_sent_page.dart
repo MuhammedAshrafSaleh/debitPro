@@ -210,6 +210,26 @@ class _EmailSentViewState extends State<_EmailSentView> {
                     ],
                   ),
                 ),
+                const SizedBox(height: 12),
+                // Spam hint
+                Row(
+                  children: [
+                    Icon(
+                      Icons.info_outline_rounded,
+                      size: 15,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        l10n.authEmailSentSpamHint,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 24),
                 // Resend countdown
                 Center(

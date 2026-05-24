@@ -63,6 +63,8 @@
   "@authEmailSentBackToLogin": {},
   "authEmailSentNotReceived": "لم أستلم البريد الإلكتروني",
   "@authEmailSentNotReceived": {},
+  "authEmailSentSpamHint": "لم تجده؟ تحقق من مجلد البريد المزعج (Spam)",
+  "@authEmailSentSpamHint": {},
   "authVerifyEmailTitle": "تحقق من بريدك الإلكتروني",
   "@authVerifyEmailTitle": {},
   "authVerifyEmailSubtitle": "أرسلنا رسالة تحقق إلى",

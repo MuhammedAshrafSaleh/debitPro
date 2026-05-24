@@ -31,6 +31,7 @@
   "authEmailSentResend": "Resend",
   "authEmailSentBackToLogin": "Back to Sign In",
   "authEmailSentNotReceived": "I didn't receive the email",
+  "authEmailSentSpamHint": "Can't find it? Check your spam or junk folder",
   "authVerifyEmailTitle": "Verify Your Email",
   "authVerifyEmailSubtitle": "We sent a verification email to",
   "authVerifyEmailInstruction": "Open your email and click the verification link to continue",

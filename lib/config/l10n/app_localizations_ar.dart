@@ -104,6 +104,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get authEmailSentNotReceived => 'لم أستلم البريد الإلكتروني';
 
   @override
+  String get authEmailSentSpamHint =>
+      'لم تجده؟ تحقق من مجلد البريد المزعج (Spam)';
+
+  @override
   String get authVerifyEmailTitle => 'تحقق من بريدك الإلكتروني';
 
   @override

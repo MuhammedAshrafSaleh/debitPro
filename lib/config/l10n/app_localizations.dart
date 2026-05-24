@@ -278,6 +278,12 @@ abstract class AppLocalizations {
   /// **'لم أستلم البريد الإلكتروني'**
   String get authEmailSentNotReceived;
 
+  /// No description provided for @authEmailSentSpamHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم تجده؟ تحقق من مجلد البريد المزعج (Spam)'**
+  String get authEmailSentSpamHint;
+
   /// No description provided for @authVerifyEmailTitle.
   ///
   /// In ar, this message translates to:

@@ -39,12 +39,6 @@ class SettingsPage extends StatelessWidget {
         ),
         title: Text(l10n.settingsTitle),
         centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_outlined),
-            onPressed: () {},
-          ),
-        ],
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

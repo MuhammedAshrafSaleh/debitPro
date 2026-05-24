@@ -255,7 +255,7 @@ void initGracePeriods() {
   // Cubits
   sl.registerFactory(() => AddGracePeriodCubit(sl()));
   sl.registerFactory(() => EditGracePeriodCubit(sl(), sl(), sl()));
-  sl.registerFactory(() => ClientGracePeriodsCubit(sl(), sl()));
+  sl.registerFactory(() => ClientGracePeriodsCubit(sl(), sl(), sl()));
 }
 
 void initPayments() {

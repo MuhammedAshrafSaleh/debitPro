@@ -207,7 +207,14 @@ class _GracePeriodDetailSheet extends StatelessWidget {
           listener: (ctx, state) {
             if (state is! ClientGracePeriodsLoaded) return;
             if (state.actionStatus == GracePeriodActionStatus.success) {
-              AppSnackbar.success(ctx, l10n.gracePeriodCommissionPaidSuccess);
+              final isDelete =
+                  state.actionType == GracePeriodActionType.delete;
+              AppSnackbar.success(
+                ctx,
+                isDelete
+                    ? l10n.gracePeriodDeleteSuccess
+                    : l10n.gracePeriodCommissionPaidSuccess,
+              );
               Navigator.of(ctx).pop();
             } else if (state.actionStatus == GracePeriodActionStatus.failure) {
               AppSnackbar.error(
@@ -241,6 +248,9 @@ class _GracePeriodDetailSheet extends StatelessWidget {
               loaded?.actionStatus == GracePeriodActionStatus.loading &&
                   loaded?.actionType ==
                       GracePeriodActionType.payOfficeCommission;
+          final isDeleteLoading =
+              loaded?.actionStatus == GracePeriodActionStatus.loading &&
+                  loaded?.actionType == GracePeriodActionType.delete;
 
           return BlocBuilder<PaymentBloc, PaymentState>(
             buildWhen: (prev, curr) =>
@@ -249,7 +259,8 @@ class _GracePeriodDetailSheet extends StatelessWidget {
               final isPayGpLoading =
                   payState.actionStatus == PaymentActionStatus.loading &&
                       payState.actionKind == PaymentActionKind.pay;
-              final isLoading = isPayGpLoading || isCommissionLoading;
+              final isLoading =
+                  isPayGpLoading || isCommissionLoading || isDeleteLoading;
 
               return Padding(
                 padding: EdgeInsetsDirectional.only(
@@ -278,7 +289,7 @@ class _GracePeriodDetailSheet extends StatelessWidget {
                   ),
                 ),
 
-                // Title row with optional edit button
+                // Title row with edit + delete buttons
                 Row(
                   children: [
                     Expanded(
@@ -291,15 +302,33 @@ class _GracePeriodDetailSheet extends StatelessWidget {
                       IconButton(
                         icon: const Icon(Icons.edit_outlined),
                         tooltip: l10n.commonEdit,
-                        onPressed: () {
-                          Navigator.of(ctx).pop();
-                          if (parentContext.mounted) {
-                            parentContext.push(
-                              '/grace-periods/${gracePeriod.id}/edit',
-                            );
-                          }
-                        },
+                        onPressed: isLoading
+                            ? null
+                            : () {
+                                Navigator.of(ctx).pop();
+                                if (parentContext.mounted) {
+                                  parentContext.push(
+                                    '/grace-periods/${gracePeriod.id}/edit',
+                                  );
+                                }
+                              },
                       ),
+                    IconButton(
+                      icon: isDeleteLoading
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : Icon(
+                              Icons.delete_outline,
+                              color: cs.error,
+                            ),
+                      tooltip: l10n.gracePeriodDeleteConfirmTitle,
+                      onPressed: isLoading
+                          ? null
+                          : () => _confirmDelete(ctx, l10n),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 12),
@@ -469,6 +498,35 @@ class _GracePeriodDetailSheet extends StatelessWidget {
         },
       ),
     );
+  }
+
+  Future<void> _confirmDelete(
+    BuildContext context,
+    AppLocalizations l10n,
+  ) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dCtx) => AlertDialog(
+        title: Text(l10n.gracePeriodDeleteConfirmTitle),
+        content: Text(l10n.gracePeriodDeleteConfirmMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dCtx).pop(false),
+            child: Text(l10n.commonCancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(dCtx).pop(true),
+            child: Text(
+              l10n.gracePeriodDeleteConfirmTitle,
+              style: TextStyle(color: Theme.of(dCtx).colorScheme.error),
+            ),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true && context.mounted) {
+      context.read<ClientGracePeriodsCubit>().delete(gracePeriod.id);
+    }
   }
 
   Future<void> _confirmAction(

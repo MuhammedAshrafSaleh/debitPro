@@ -313,6 +313,8 @@ class GracePeriodRemoteDataSourceImpl implements GracePeriodRemoteDataSource {
       );
 
       await batch.commit();
+    } on ServerException {
+      rethrow;
     } catch (e) {
       _log.e('deleteGracePeriod', error: e);
       throw ServerException(e.toString());

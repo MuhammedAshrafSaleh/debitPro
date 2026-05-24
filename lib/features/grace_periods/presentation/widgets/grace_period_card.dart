@@ -216,11 +216,6 @@ class _GracePeriodDetailSheet extends StatelessWidget {
                     : l10n.gracePeriodCommissionPaidSuccess,
               );
               Navigator.of(ctx).pop();
-            } else if (state.actionStatus == GracePeriodActionStatus.failure) {
-              AppSnackbar.error(
-                ctx,
-                state.actionMessage ?? l10n.commonError,
-              );
             }
           },
         ),
@@ -288,6 +283,35 @@ class _GracePeriodDetailSheet extends StatelessWidget {
                     ),
                   ),
                 ),
+
+                // Inline error banner for delete/action failures
+                if (loaded?.actionStatus == GracePeriodActionStatus.failure &&
+                    loaded?.actionMessage != null) ...[
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 10),
+                    margin: const EdgeInsets.only(bottom: 12),
+                    decoration: BoxDecoration(
+                      color: cs.errorContainer,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.error_outline,
+                            color: cs.onErrorContainer, size: 18),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            loaded!.actionMessage!,
+                            style: tt.bodySmall
+                                ?.copyWith(color: cs.onErrorContainer),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
 
                 // Title row with edit + delete buttons
                 Row(
